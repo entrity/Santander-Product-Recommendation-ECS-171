@@ -35,3 +35,9 @@ if (!all(blanks.ind_empleado == blanks.indfall))
     stop('mismatch 7')
 if (!all(blanks.ind_empleado == blanks.ind_actividad_cliente))
     stop('mismatch 8')
+
+# shorter_d = d[-blanks.ind_empleado,]
+
+# It appears that all of the 9 columns which have exactly 27334 missing values
+# are missing values on exactly the same rows, so I expect that it would be
+# worthwhile to omit those rows.
