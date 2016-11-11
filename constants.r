@@ -130,7 +130,7 @@ CATEGORICAL_COLS_0 = c(
 
 # Real-valued or integer-valued columns (ordinal)
 # Non-categorical, non-date columns
-REAL_COLS_0 = c('age', 'antiguedad')
+REAL_COLS_0 = c('age', 'antiguedad', 'renta')
 
 DATE_COLS_0 = c('fecha_dato', 'fecha_alta')
 

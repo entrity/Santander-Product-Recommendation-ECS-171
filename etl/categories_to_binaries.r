@@ -8,7 +8,8 @@
 # 	source('../constants.r')
 
 # Start with customer identifier col
-x = data.frame(D$ncodpers)
+ncodpers = D$ncodpers
+x = data.frame(ncodpers)
 
 # Add date cols
 for (feature in DATE_COLS_0) {
