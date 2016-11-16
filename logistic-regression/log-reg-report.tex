@@ -28,7 +28,7 @@
 
 \subsection{Defining a sample (features-to-label pair)}
 
-Interpreting the cryptic requirement  "..." introduced some room for error: it was unclear to us whether we were to be given only the previous month's data or the entire history when predicting the purchases of the final month. Examining the file offered as testing data provided no insight because it contained no feature values, only the labels.
+Interpreting the requirement ``You will predict what additional products a customer will get in the last month, 2016-06-28, in addition to what they already have at 2016-05-28" introduced some room for error: it was unclear to us whether in the final test we were to be given only the previous month's data or the entire history when predicting the purchases of the final month. Examining the file offered as testing data provided no insight because it contained no feature values, only the labels.
 
 Ultimately, we decided by majority vote to define a sample (features-to-label pair) as the values for any two consecutive months for a single customer (identified by ncodpers). Hereafter, the "date" of a sample refers to the earlier of the two months which a features-to-label pair covers, i.e. it is the month from which the feature values are drawn, not the month from which the labels (purchases) are drawn.
 
