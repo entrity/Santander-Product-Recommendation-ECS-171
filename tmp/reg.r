@@ -1,3 +1,5 @@
+set.seed(393) # err repeater
+set.seed(16)
 
 load('Xhead.rda')
 load('Yhead.rda')
@@ -9,16 +11,15 @@ X[is.na(X)] <- 0
 Y = Y[,-c(1,2)]
 for (col in 1:length(Y))
   Y[,col] <- as.numeric(X[,col])
-Y = Y[, 4]
+Y = Y[, 5]
 
 samplect = length(Y)
 testRows = sample.int(samplect, round(samplect * .2))
 
 lambda = 0.1
 
-set.seed(39)
 
-# train <- function (X, y, lambda) {
+train <- function (X, Y, lambda) {
   MSE_THRESHOLD = 0.000001
   Y = as.numeric(Y)
   m = length(Y) # numer of samples
@@ -31,14 +32,14 @@ set.seed(39)
   for (epoch in 1:1000) {
     order = sample.int(m, m)
     for (row in order) {
-      x = as.numeric(c(1, X[row,]))
+      x = c(1, as.numeric(X[row,]))
       y = Y[row]
 
       err0 = y - 1/(1 + exp(w %*% x)) + lambda * w %*% w
       gra = err0 * x
       a = 0.1
       sqerr0 = err0^2
-  
+
       if (sqerr0 < MSE_THRESHOLD) {
         epocherrors[row] <- sqerr0
         next
@@ -74,14 +75,17 @@ set.seed(39)
   }
   warning(sprintf('performed max epochs (%d) on regression', epoch))
   return (w)
-# }
+}
 
-# w = train(X[-testRows,], Y[-testRows], lambda)
-# X = X[testRows,]
-# Y = Y[testRows]
+test <- function (X, Y, w) {
+  X     = cbind(rep(1, nrow(X)), X)
+  h     = 1/(1 + exp( X %*% w ))
+  errs  = h - Y
+  mserr = mean(errs^2)
+  print(mserr)
+}
 
-# Calc mse
-# h = 1/(1 + exp( w %*% X ))
-# errs = h - Y
-# mserr= mean(errs^2)
-# print(mserr)
+w = train(X[-testRows,], Y[-testRows], lambda)
+Xt = data.matrix(X[testRows,])
+Yt = Y[testRows]
+test(Xt, Yt, w)
