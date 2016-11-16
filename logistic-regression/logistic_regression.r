@@ -1,17 +1,21 @@
 date()
 lambda = 0.1
 
+# X.rda has 12669961 rows
+# Original training has 13619575 rows
+
 train <- function (X, Y, lambda) {
   MSE_THRESHOLD = 0.000001
   Y = as.numeric(Y)
-  m = length(Y) # numer of samples
+
+  m = length(Y) # numer of samples 12669961
   n = 1 + length(X) # number of features, including bias
 
   w = rep(0, n)
   epocherrors = rep(0, m)
   prevmserrs = rep(0, 4)
 
-  for (epoch in 1:100) {
+  for (epoch in 1:20) {
     order = sample.int(m, m)
     for (row in order) {
       x = c(1, as.numeric(X[row,]))
@@ -28,7 +32,7 @@ train <- function (X, Y, lambda) {
       }
       
       # Search for a that yields error less than 'err'
-      for (i in 1:100) {
+      for (i in 1:64) {
         w1 = w + a * gra
         err1 = y - 1/(1 + exp(w1 %*% x)) + lambda * w1 %*% w1
         sqerr1 = err1^2
@@ -51,7 +55,7 @@ train <- function (X, Y, lambda) {
     # Check satisfaction conditions
     if (mserr < MSE_THRESHOLD)
       return(w)
-    if (epoch > length(prevmserrs) && all(prevmserrs == mserr))
+    if (epoch > length(prevmserrs) && all(round(prevmserrs, 7) == round(mserr, 7)))
       return(w)
     prevmserrs[1 + epoch %% length(prevmserrs)] = mserr
     if (epoch > 4)
@@ -68,24 +72,34 @@ test <- function (X, Y, w) {
   errs  = h - Y
   mserr = mean(errs^2)
   print(sprintf('testing mean squared error %f', mserr))
+  return(mserr)
 }
 
 # Routine
 args = commandArgs(trailingOnly=TRUE)
 REGRESSION_INDEX <- as.numeric(args[1])
 print(sprintf('REGRESSION INDEX %d', REGRESSION_INDEX))
-load('X.rda')
-load('Y.rda')
+file_suffix <- args[2]
+load(sprintf('Y%s.rda', file_suffix))
+if (!exists('Y')) Y = subY
+print(sprintf('number of rows: %d', nrow(Y)))
+load(sprintf('X%s.rda', file_suffix))
+if (!exists('X')) X = subX
 X[is.na(X)] <- 0
 X <- X[,-c(1,2)] # omit D.nomcodpers & fecha_dato 
 Y <- Y[,-c(1,2)] # omit D.nomcodpers & fecha_dato
 Y = Y[, REGRESSION_INDEX]
 sampleCt = length(Y)
 testRows = sample.int(sampleCt, sampleCt*.1)
+# Train
 w = train(X[-testRows,], Y[-testRows], lambda)
 print('WEIGHTS')
 print(w)
+save(w, file=sprintf('w-%d-%08d.rda', REGRESSION_INDEX, sampleCt))
 print(sprintf('REGRESSION INDEX %d', REGRESSION_INDEX))
-test(X[testRows,], Y[testRows], w)
+# Test
+mserr = test(X[testRows,], Y[testRows], w)
+# Cleanup
+print(sprintf('LOGREG SUMMARY : %d : %s : %d : %10f', REGRESSION_INDEX, names(Y)[REGRESSION_INDEX], sampleCt, mserr))
 print(warnings())
 date()
