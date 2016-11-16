@@ -2,38 +2,42 @@
 load('Xhead.rda')
 load('Yhead.rda')
 
-Y = Y[, 4]
 X = X[,-c(1,2)]
+for (col in 1:length(X))
+  X[,col] <- as.numeric(X[,col])
 X[is.na(X)] <- 0
+Y = Y[,-c(1,2)]
+for (col in 1:length(Y))
+  Y[,col] <- as.numeric(X[,col])
+Y = Y[, 5]
+
+samplect = length(Y)
+testRows = sample.int(samplect, round(samplect * .2))
 
 lambda = 0.1
 
 set.seed(39)
-MSE_THRESHOLD = 0.000001
 
-
-  X = X[,-c(1,2)]
-  m = length(Y)
-  n = length(X)
+train <- function (X, Y, lambda) {
+  MSE_THRESHOLD = 0.000001
+  m = length(Y) # numer of samples
+  n = length(X) # number of features
 
   w = rep(0, n)
   epocherrors = rep(0, m)
-  prevmserr = Inf
+  prevmserrs = rep(0, 4)
 
   for (epoch in 1:1000) {
     order = sample.int(m, m)
     for (row in order) {
-      
-      x = as.numeric(X[row,])
-      y = as.numeric(Y[row])
-      
-      errors = y - 1/(1 + exp(w %*% x)) + lambda * w %*% w
-      gra = errors * x
+
+      errors0 = y - 1/(1 + exp(w %*% x)) + lambda * w %*% w
+      gra = errors0 * x
       a = 0.1
-      err = sum(errors^2)
+      err = sum(errors0^2)
   
       if (err < MSE_THRESHOLD) {
-        epocherrors[row] <- err
+        epocherrors[r] <- err
         next
       }
       
@@ -56,11 +60,25 @@ MSE_THRESHOLD = 0.000001
       }
     } # end of epoch
     # Calc current error
-    mserr = sum(errors^2)
-    print(sprintf('epoch %d    error %f', epoch, mserr))
+    mserr = epocherrors[row] / m
+    print(sprintf('epoch %3d    error %f', epoch, mserr))
     # Check satisfaction conditions
-    if (mserr < MSE_THRESHOLD || prevmserr == mserr)
+    if (mserr < MSE_THRESHOLD)
       return(w)
-    prevmserr = mserr
+    if (epoch > length(prevmserrs) && all(prevmserrs == mserr))
+      return(w)
+    prevmserrs[1 + epoch %% length(prevmserrs)] = mserr
   }
   warning(sprintf('performed max epochs (%d) on regression', epoch))
+  return (w)
+}
+
+w = train(X[-testRows,], Y[-testRows], lambda)
+X = X[testRows,]
+Y = Y[testRows]
+
+# Calc mse
+h = 1/(1 + exp( w %*% X ))
+errs = h - Y
+mserr= mean(errs^2)
+print(mserr)
