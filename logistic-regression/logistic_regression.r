@@ -1,3 +1,4 @@
+date()
 lambda = 0.1
 
 train <- function (X, Y, lambda) {
@@ -72,7 +73,7 @@ test <- function (X, Y, w) {
 # Routine
 args = commandArgs(trailingOnly=TRUE)
 REGRESSION_INDEX <- as.numeric(args[1])
-print(sprintf("REGRESSION INDEX %d", REGRESSION_INDEX))
+print(sprintf('REGRESSION INDEX %d', REGRESSION_INDEX))
 load('X.rda')
 load('Y.rda')
 X[is.na(X)] <- 0
@@ -82,6 +83,9 @@ Y = Y[, REGRESSION_INDEX]
 sampleCt = length(Y)
 testRows = sample.int(sampleCt, sampleCt*.1)
 w = train(X[-testRows,], Y[-testRows], lambda)
-print(sprintf("REGRESSION INDEX %d", REGRESSION_INDEX))
+print('WEIGHTS')
+print(w)
+print(sprintf('REGRESSION INDEX %d', REGRESSION_INDEX))
 test(X[testRows,], Y[testRows], w)
 print(warnings())
+date()
