@@ -1,0 +1,114 @@
+\documentclass{report}
+
+\begin{document}
+	
+\title{Santander Product Recommendation}
+
+\author{Xinyi Hou,
+	Yingxi Yu,
+	Yuan Xu,
+	Wenyu Li,
+	Qiaojuan Niu,
+	Huiyu Bi,
+	Meng Li,
+	Zhongyu Fan,
+	Aoran Zhang,
+	Yuan Tian,
+	Miao Wang,
+	Markham Anderson,
+	Bowen He,
+	Charlton Lin,
+	Zoran Dabic}
+
+\section{Abstract}
+
+\section{Introduction}
+
+\section{Methods}
+
+\subsection{Defining a sample (features-to-label pair)}
+
+Interpreting the cryptic requirement  "..." introduced some room for error: it was unclear to us whether we were to be given only the previous month's data or the entire history when predicting the purchases of the final month. Examining the file offered as testing data provided no insight because it contained no feature values, only the labels.
+
+Ultimately, we decided by majority vote to define a sample (features-to-label pair) as the values for any two consecutive months for a single customer (identified by ncodpers). Hereafter, the "date" of a sample refers to the earlier of the two months which a features-to-label pair covers, i.e. it is the month from which the feature values are drawn, not the month from which the labels (purchases) are drawn.
+
+\subsection{ETL}
+
+Our labels (Y-values) were 24 binary fields corresponding to the Santander products which a customer may have purchased. By comparing the product fields from the data file in a given month to those of the previous month (on an individual-customer basis), we determined when each product was purchased and set the corresponding label to 1 if the purchase took place in the month following the date of the sample, 0 otherwise. (If the purchase took place before the 1.5-year range, it is never included in the label.)
+
+The feature-value data had the expected hurdles to pass: dealing with empty values and categorical variables.
+
+As for categorical features, we replaced them with sets of binary features, as expected. For example, if a given categorical feature had three possible values ${A,B,C}$, we replaced that feature with a binary column for $A$, a binary column for $B$, and a binary column for $C$; these binary columns have a 1 for rows where the original categorical feature held a value corresponding to the binary column's value and a 0 otherwise.
+
+In most cases, this was straightforward. In some cases (as in the case of $sexo$, i.e. "sex") we had missing values which we preferred to preserve as "missing," so we included a binary column for a "missing" value in $sexo$.
+
+Unfortunately, two of our categorical variables had over 100 possible values, so our feature space ballooned, threatening the efficacy of our model and motivating regularization later on.
+
+Most empty values occurred in two places: the $renta$ column and a certain 27334 rows which each had exactly 9 missing values in all the same columns. We eliminated the troublesome rows, but we preferred not to discard such valuable financial data as rent. About 10\% of the samples were missing $renta$. We undertook to perform a linear regression to infer the missing values, but due to scarcity of time, we ended up filling in the missing rents with the average rent for the province in which the customer lived. In at least one case, no rent data was available for the province in question, so we used the average rent across all available rents, again, expediency forcing sacrifice of accuracy.
+
+Some features were irrelevant for calculation, such as $tipodom$ (address type), and could be discarded easily. Others were used for organizing data but not for calculating regressions: $nomcodpers$ and $fecha\_dato$.
+
+$nom\_prov$ was redundant with $cod\_prov$, so we omitted the former.
+
+\subsection{Limiting the Sample}
+
+The data had become quite large, taking 39GB in R (measured by $object.size()$). We in fact were not able to make progress on our own workstations and were compelled to make use of a cluster owned by the Engineering Department.
+
+Perhaps a tool other than R would have facilitated our work and imposed a lesser cost to system resources, but time constraints dictated that we not start over and develop familiarity with another tool. (Matlab is not available on the Engineering Department's cluster.)
+
+In order to turn out results quickly, we limited the size of the data with which we worked by taking a random sample from the samples produced by our ETL. We experimented with samples of different size and eventually proceeded with a working set of 197968 ($1/2^6$ as many as we produced in ETL). We used a random 10\% of these samples as testing data.
+
+\subsection{Regression}
+
+We performed a logistic regression on each of the 24 products that a customer might have purchased. We used the sigmoid function $\frac{1}{1+e^{w^Tx}}$.
+
+We performed logistic regression using an augmented error if $\lambda \times L_2norm$ (lasso regression). Naturally, we would use cross-validation to identify the best $\lambda$ for the data, but due to time constraints, we used our sense of the problem to decide on a $\lambda$ value of 0.1. If we were to redo this, we would perform 10-fold cross-validation over a range of possible $\lambda$'s and choose the one that produced the lowest validation error.
+
+We considered a variable learning rate such as Newton's method or a rate that decayed as the iteration count grew. Ultimately, we used an implementation inspired by steepest descent: we began each weight-update with a learning rate of 0.1, which we supposed would be too large in many cases. If the new weights produced an error larger than the previous one, we would try a learning rate half as large, and proceed from there in the fashion of a binary search for some time until we found a minimum error for the current gradient or until we reached some number of iterations.
+
+\section{Results}
+
+For the 24 products (i.e. regressions), we calculated the following mean-squared testing errors on our held-out data:
+
+\begin{tabular}{l r}
+	ind\_ahor\_fin\_ult1D  &  0.000000 \\
+	ind\_aval\_fin\_ult1D  &  1.000000 \\
+	ind\_cco\_fin\_ult1D   &  0.006567 \\
+	ind\_cder\_fin\_ult1D  &  0.000000 \\
+	ind\_cno\_fin\_ult1D   &  0.002576 \\
+	ind\_ctju\_fin\_ult1D  &  0.999949 \\
+	ind\_ctma\_fin\_ult1D  &  0.000303 \\
+	ind\_ctop\_fin\_ult1D  &  0.000455 \\
+	ind\_ctpp\_fin\_ult1D  &  0.999899 \\
+	ind\_deco\_fin\_ult1D  &  0.000253 \\
+	ind\_deme\_fin\_ult1D  &  0.000000 \\
+	ind\_dela\_fin\_ult1D  &  0.001061 \\
+	ind\_ecue\_fin\_ult1D  &  0.001667 \\
+	ind\_fond\_fin\_ult1D  &  0.000253 \\
+	ind\_hip\_fin\_ult1D   &  0.000000 \\
+	ind\_plan\_fin\_ult1D  &  0.000101 \\
+	ind\_pres\_fin\_ult1D  &  1.000000 \\
+	ind\_reca\_fin\_ult1D  &  0.000707 \\
+	ind\_tjcr\_fin\_ult1D  &  0.005203 \\
+	ind\_valo\_fin\_ult1D  &  0.000354 \\
+	ind\_viv\_fin\_ult1D   &  0.000000 \\
+	ind\_nomina\_ult1D    &  0.005607 \\
+	ind\_nom\_pens\_ult1D  &  0.006921 \\
+	ind\_recibo\_ult1D    &  0.011517 \\
+\end{tabular}
+
+The mean of these errors is 0.1685.
+
+\section{Discussion}
+
+The results of the logistic regressions are unfortunately suspect. A quick examination shows that the gamut of possible errors is crossed completely: testing errors range from 0 to 1, inclusive. More than likely, the frequency of errors at these two extremes may be explained by the scarcity of purchase data for some products. Even considering all of the Santander data that were supplied, some purchases are so rare that it is entirely conceivable that our random sample contains zero, one, or only a handful of 1's in the corresponding label column. In the event that no 1's are to be found for a given product, it is no wonder that our testing error would be 0; no other error is possible.
+
+Our limitation of the dataset to $1/2^6$ of its original size certainly introduces room for error, but even so, we have almost 200K samples to work with and only 419 features. This is well past the ten-times-the-VC-dimension rule of thumb.
+
+Perhaps a greater amount of feature reduction should have been performed. On a typical example from our 24 regressions, 251 non-zero weights remained. However, only 19 weights measured greater than 0.00001. We intended to perform PCA in order to combat the explosion of features that the bugaboo categorical features imposed: $pais\_residencia$, $canal\_entrada$, and $cod\_prov$ each gave rise to a great many binary features, thereby heightening risk of disproportionately weighting the original categorical columns.
+
+Our decisions for how to fill in missing values also likely contribute to some inaccuracy in our model.
+
+\section{References}
+
+\end{document}
