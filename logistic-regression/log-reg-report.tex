@@ -62,7 +62,7 @@ In order to turn out results quickly, we limited the size of the data with which
 
 We performed a logistic regression on each of the 24 products that a customer might have purchased. We used the sigmoid function $\frac{1}{1+e^{w^Tx}}$.
 
-We performed logistic regression using an augmented error if $\lambda \times L_2norm$ (lasso regression). Naturally, we would use cross-validation to identify the best $\lambda$ for the data, but due to time constraints, we used our sense of the problem to decide on a $\lambda$ value of 0.1. If we were to redo this, we would perform 10-fold cross-validation over a range of possible $\lambda$'s and choose the one that produced the lowest validation error.
+We performed logistic regression using an augmented error if $\lambda \times L_2norm$ (ridge regression). Naturally, we would use cross-validation to identify the best $\lambda$ for the data, but due to time constraints, we used our sense of the problem to decide on a $\lambda$ value of 0.1. If we were to redo this, we would perform 10-fold cross-validation over a range of possible $\lambda$'s and choose the one that produced the lowest validation error.
 
 We considered a variable learning rate such as Newton's method or a rate that decayed as the iteration count grew. Ultimately, we used an implementation inspired by steepest descent: we began each weight-update with a learning rate of 0.1, which we supposed would be too large in many cases. If the new weights produced an error larger than the previous one, we would try a learning rate half as large, and proceed from there in the fashion of a binary search for some time until we found a minimum error for the current gradient or until we reached some number of iterations.
 
