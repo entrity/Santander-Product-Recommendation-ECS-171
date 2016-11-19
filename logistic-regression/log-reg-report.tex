@@ -103,12 +103,17 @@ The mean of these errors is 0.1685.
 
 The results of the logistic regressions are unfortunately suspect. A quick examination shows that the gamut of possible errors is crossed completely: testing errors range from 0 to 1, inclusive. More than likely, the frequency of errors at these two extremes may be explained by the scarcity of purchase data for some products. Even considering all of the Santander data that were supplied, some purchases are so rare that it is entirely conceivable that our random sample contains zero, one, or only a handful of 1's in the corresponding label column. In the event that no 1's are to be found for a given product, it is no wonder that our testing error would be 0; no other error is possible.
 
-Our limitation of the dataset to $1/2^6$ of its original size certainly introduces room for error, but even so, we have almost 200K samples to work with and only 419 features. This is well past the ten-times-the-VC-dimension rule of thumb.
+Our limitation of the dataset to $1/2^6$ of its original size certainly introduces room for error, but even so, we have almost 200K samples to work with and only 419 features. This is well past the ten-times-the-VC-dimension rule of thumb.\cite{amlbook} 
 
 Perhaps a greater amount of feature reduction should have been performed. On a typical example from our 24 regressions, 251 non-zero weights remained. However, only 19 weights measured greater than 0.00001. We intended to perform PCA in order to combat the explosion of features that the bugaboo categorical features imposed: $pais\_residencia$, $canal\_entrada$, and $cod\_prov$ each gave rise to a great many binary features, thereby heightening risk of disproportionately weighting the original categorical columns.
 
 Our decisions for how to fill in missing values also likely contribute to some inaccuracy in our model.
 
-\section{References}
+\begin{thebibliography}{9}
+
+\bibitem{amlbook}
+Y. S. Abu-Mostafa, M. Magdon-Ismail, and  L. Hsuan-Tien, \textit{Learning From Data: A Short Course}. United States of America, 2012.
+
+\end{thebibliography}
 
 \end{document}
