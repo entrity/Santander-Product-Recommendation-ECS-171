@@ -76,20 +76,20 @@ We considered a variable learning rate such as Newton's method or a rate that de
 
 For the 24 products (i.e. regressions), we calculated the following mean-squared testing errors on our held-out data:
 
-\begin{table}
+\begin{table}\footnotesize
 \centering
 \caption{Held-out Data MSE}
 \label{my-label}
 \begin{tabular}{llllllll}
-error = 0                            & ahor\_fin:  & cder\_fin: & deme\_fin: & hip\_fin:  & viv\_fin:  &                     &            \\
+MSE = 0                            & ahor\_fin:  & cder\_fin: & deme\_fin: & hip\_fin:  & viv\_fin:  &                     &            \\
                                      & 0                    & 0          & 0          & 0          & 0          &                     &            \\
-0 \textless error \textless 0.001      & ctma\_fin:          & ctop\_fin: & deco\_fin: & fond\_fin: & plan\_fin: & reca\_fin:  & valo\_fin: \\
+0 \textless MSE \textless 0.001      & ctma\_fin:          & ctop\_fin: & deco\_fin: & fond\_fin: & plan\_fin: & reca\_fin:  & valo\_fin: \\
                                      & 0.000303            & 0.000455   & 0.000253   & 0.000253   & 0.000101   &  0.000707             & 0.000354   \\
-0.001 \textless error \textless 0.01 & cco\_fin:           & cno\_fin:  & ecue\_fin: & dela\_fin: & tjcr\_fin: & nomina:             & nom\_pens: \\
+0.001 \textless MSE \textless 0.01 & cco\_fin:           & cno\_fin:  & ecue\_fin: & dela\_fin: & tjcr\_fin: & nomina:             & nom\_pens: \\
                                      & 0.006567            & 0.002576   & 0.001667   & 0.001061   & 0.005203   & 0.005607            & 0.006921   \\
-0.01 \textless error \textless 1     & ctju\_fin:          & ctpp\_fin: & recibo:    &            &            &                     &            \\
+0.01 \textless MSE \textless 1     & ctju\_fin:          & ctpp\_fin: & recibo:    &            &            &                     &            \\
                                      & 0.999949            & 0.999899   & 0.011517   &            &            &                     &            \\
-error = 1                            & aval\_fin:          & pres\_fin: &            &            &            &                     &            \\
+MSE = 1                            & aval\_fin:          & pres\_fin: &            &            &            &                     &            \\
                                      & 1                   & 1          &            &            &            &                     &           
 \end{tabular}
 \end{table}
@@ -110,6 +110,12 @@ Our decisions for how to fill in missing values also likely contribute to some i
 
 \bibitem{amlbook}
 Y. S. Abu-Mostafa, M. Magdon-Ismail, and  L. Hsuan-Tien, \textit{Learning From Data: A Short Course}. United States of America, 2012.
+\bibitem{book}
+Trevor Hastie, Robert Tibshirani, and  Jerome Friedman, 
+\textit{The Elements of Statistical Learning: Data Mining, Inference, and Prediction}. Second Edition, P119 - P127.
+\bibitem{paper}
+Yehuda Koren, Robert Bell, and  Chris Volinsky, 
+\textit{Matrix Factorization Techniques for Recommender Systems}. IEEE Computer Society, 2009.
 
 \end{thebibliography}
 
