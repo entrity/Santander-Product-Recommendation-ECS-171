@@ -36,7 +36,13 @@ Ultimately, we decided by majority vote to define a sample (features-to-label pa
 
 Our labels (Y-values) were 24 binary fields corresponding to the Santander products which a customer may have purchased. By comparing the product fields from the data file in a given month to those of the previous month (on an individual-customer basis), we determined when each product was purchased and set the corresponding label to 1 if the purchase took place in the month following the date of the sample, 0 otherwise. (If the purchase took place before the 1.5-year range, it is never included in the label.)
 
-The feature-value data had the expected hurdles to pass: dealing with empty values and categorical variables.
+For the feature space (X-values), we did following transformation and feature engineering.
+
+Since the previous purchases for each customer in a given month were also useful features to predict his/her purchasing behevior, we added a column for each product that holds the number of months since the customer’s first purchase of that product. So the 24 newly-added columns contained the information of the purchase history for each customer before the given month. 
+
+The variable "fecha\_alta" was the date in which the customer became as the first holder of a contract in the bank. We transformed it into a numeric variable named "memberdays" which was the difference between this date and the given date, i.e., "fecha\_dato". "Memberdays" kept records of how many days the customer had become a Santander member.
+
+The feature-value data also had the expected hurdles to pass: dealing with empty values and categorical variables.
 
 As for categorical features, we replaced them with sets of binary features, as expected. For example, if a given categorical feature had three possible values ${A,B,C}$, we replaced that feature with a binary column for $A$, a binary column for $B$, and a binary column for $C$; these binary columns have a 1 for rows where the original categorical feature held a value corresponding to the binary column's value and a 0 otherwise.
 
@@ -70,32 +76,23 @@ We considered a variable learning rate such as Newton's method or a rate that de
 
 For the 24 products (i.e. regressions), we calculated the following mean-squared testing errors on our held-out data:
 
-\begin{tabular}{l r}
-	ind\_ahor\_fin\_ult1D  &  0.000000 \\
-	ind\_aval\_fin\_ult1D  &  1.000000 \\
-	ind\_cco\_fin\_ult1D   &  0.006567 \\
-	ind\_cder\_fin\_ult1D  &  0.000000 \\
-	ind\_cno\_fin\_ult1D   &  0.002576 \\
-	ind\_ctju\_fin\_ult1D  &  0.999949 \\
-	ind\_ctma\_fin\_ult1D  &  0.000303 \\
-	ind\_ctop\_fin\_ult1D  &  0.000455 \\
-	ind\_ctpp\_fin\_ult1D  &  0.999899 \\
-	ind\_deco\_fin\_ult1D  &  0.000253 \\
-	ind\_deme\_fin\_ult1D  &  0.000000 \\
-	ind\_dela\_fin\_ult1D  &  0.001061 \\
-	ind\_ecue\_fin\_ult1D  &  0.001667 \\
-	ind\_fond\_fin\_ult1D  &  0.000253 \\
-	ind\_hip\_fin\_ult1D   &  0.000000 \\
-	ind\_plan\_fin\_ult1D  &  0.000101 \\
-	ind\_pres\_fin\_ult1D  &  1.000000 \\
-	ind\_reca\_fin\_ult1D  &  0.000707 \\
-	ind\_tjcr\_fin\_ult1D  &  0.005203 \\
-	ind\_valo\_fin\_ult1D  &  0.000354 \\
-	ind\_viv\_fin\_ult1D   &  0.000000 \\
-	ind\_nomina\_ult1D    &  0.005607 \\
-	ind\_nom\_pens\_ult1D  &  0.006921 \\
-	ind\_recibo\_ult1D    &  0.011517 \\
+\begin{table}
+\centering
+\caption{Held-out Data MSE}
+\label{my-label}
+\begin{tabular}{llllllll}
+error = 0                            & ahor\_fin:  & cder\_fin: & deme\_fin: & hip\_fin:  & viv\_fin:  &                     &            \\
+                                     & 0                    & 0          & 0          & 0          & 0          &                     &            \\
+0 \textless error \textless 0.001      & ctma\_fin:          & ctop\_fin: & deco\_fin: & fond\_fin: & plan\_fin: & reca\_fin:  & valo\_fin: \\
+                                     & 0.000303            & 0.000455   & 0.000253   & 0.000253   & 0.000101   &  0.000707             & 0.000354   \\
+0.001 \textless error \textless 0.01 & cco\_fin:           & cno\_fin:  & ecue\_fin: & dela\_fin: & tjcr\_fin: & nomina:             & nom\_pens: \\
+                                     & 0.006567            & 0.002576   & 0.001667   & 0.001061   & 0.005203   & 0.005607            & 0.006921   \\
+0.01 \textless error \textless 1     & ctju\_fin:          & ctpp\_fin: & recibo:    &            &            &                     &            \\
+                                     & 0.999949            & 0.999899   & 0.011517   &            &            &                     &            \\
+error = 1                            & aval\_fin:          & pres\_fin: &            &            &            &                     &            \\
+                                     & 1                   & 1          &            &            &            &                     &           
 \end{tabular}
+\end{table}
 
 The mean of these errors is 0.1685.
 
