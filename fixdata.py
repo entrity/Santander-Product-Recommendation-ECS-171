@@ -32,21 +32,21 @@ data.loc[data.renta.isnull(),"renta"] = new_incomes.loc[data.renta.isnull(),"ren
 median_renta = data.loc[data.renta.notnull(),"renta"].median()
 data.loc[data.renta.isnull(),"renta"] = median_renta
 data.loc[data.sexo.isnull(),"sexo"] = 'V'
-x = data
-x.drop(['Unnamed: 0','index'],axis=1).to_csv('fix_train.csv')
+data = data.sort(['fecha_dato'])
+data.drop(['index'],axis=1).to_csv('fix_train.csv')
 #x.to_csv('fixdata.csv')
 
-x = pd.read_csv('fix_train.csv')
-x.shape
+#x.shape
+#x = pd.read_csv('fix_train.csv')
 
-del x['Unnamed: 0']
+#del x['Unnamed: 0']
 
-result = x.sort(['fecha_dato'])
+#result = x.sort(['fecha_dato'])
 
 
 #do same to test data
 
-test.loc[data.indfall.isnull(),'indfall'] = 'N'
+test.loc[test.indfall.isnull(),'indfall'] = 'N'
 #modify extreme values of age variable using median values based on different group,say [18,30] and [30,100]
 
 test['age'] = pd.to_numeric(test['age'],errors = 'coerce')
@@ -57,16 +57,8 @@ test["age"] = test["age"].astype(int)
 
 test["cod_prov"].fillna(mode_prov,inplace=True)
 
-test.loc[test.renta.isnull(),"renta"] = new_incomes.loc[test.renta.isnull(),"renta"].reset_index()
 test.loc[test.renta.isnull(),"renta"] = median_renta
 test.loc[test.sexo.isnull(),"sexo"] = 'V'
-x = test
-x.drop(['Unnamed: 0','index'],axis=1).to_csv('fix_test.csv')
-#x.to_csv('fixdata.csv')
 
-x = pd.read_csv('fix_test.csv')
-x.shape
-
-del x['Unnamed: 0']
-
-result = x.sort(['fecha_dato'])
+test = test.sort(['fecha_dato'])
+test.drop(['index'],axis=1).to_csv('fix_test.csv')
