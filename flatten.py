@@ -1,7 +1,7 @@
 import csv
 import time
 
-TRAIN_DATA_FILE = 'fix_data.csv'
+TRAIN_DATA_FILE = 'fix_train.csv'
 TEST_DATA_FILE = 'fix_test.csv'
 TRAIN_OUTPUT_FILE = 'flat_train.csv'
 TEST_OUTPUT_FILE = 'flat_test.csv'
@@ -732,7 +732,7 @@ with open(TEST_DATA_FILE, 'r') as csvf:
             row1 = False
             continue
         ncodpers = int(row[2])
-            
+
         if (ncodpers not in customers): #New customer
             startDate = date_to_month(row[7])
             customers[ncodpers] = CustomerBuilder(ncodpers, startDate)
