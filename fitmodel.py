@@ -60,11 +60,11 @@ y_train = y_train.astype('float16')
 y_test = y_test.astype('float16')
 
 #fit randome forest
-RF = ensemble.RandomForestClassifier(n_estimators = 5, max_depth = 10, min_samples_leaf = 10,
-                                     n_jobs = 4, random_state = 2016)
+#RF = ensemble.RandomForestClassifier(n_estimators = 5, max_depth = 10, min_samples_leaf = 10,
+#                                     n_jobs = 4, random_state = 2016)
 
-# RF = ensemble.RandomForestClassifier(n_estimators = 100, max_depth = 10, min_samples_leaf = 10,
-#                                      n_jobs = 4, random_state = 2016)
+RF = ensemble.RandomForestClassifier(n_estimators = 100, max_depth = 10, min_samples_leaf = 10,
+                                     n_jobs = 4, random_state = 2016)
 RF.fit(X_train_new,y_train)
 #predict probs of customers buy that product
 y_preds = np.array(RF.predict_proba(X_test_new))[:,:,1].T
