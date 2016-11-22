@@ -109,7 +109,7 @@ for i in range( 0, len( data['custo'] ) ):
     data['sum_nompayroll'][i], data['sum_nompension'][i], data['sum_debit'][i] )
 
 with open('submission.csv', 'w') as outf:
-    outf.write('ncodpers,added_products')
+    outf.write('ncodpers,added_products\n')
     for ind, thing in enumerate( y ):
         outf.write( str( testdata['custo'][ind] ) + ',' + customers[testdata['custo'][ind]].new_products( thing ) + '\n' )
 
