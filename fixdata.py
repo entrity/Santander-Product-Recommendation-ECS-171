@@ -60,5 +60,4 @@ test["cod_prov"].fillna(mode_prov,inplace=True)
 test.loc[test.renta.isnull(),"renta"] = median_renta
 test.loc[test.sexo.isnull(),"sexo"] = 'V'
 
-test = test.sort(['fecha_dato'])
-test.drop(['index'],axis=1).to_csv('fix_test.csv')
+test.to_csv('fix_test.csv')
