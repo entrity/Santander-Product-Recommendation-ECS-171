@@ -66,7 +66,7 @@ RF = ensemble.RandomForestClassifier(n_estimators = 100, max_depth = 10, min_sam
 #                                      n_jobs = 4, random_state = 2016)
 RF.fit(X_train_new,y_train)
 #predict probs of customers buy that product
-y_preds = np.array(RF.predict_proba(X_test_new))[:,:,1].T
+#y_preds = np.array(RF.predict_proba(X_test_new))[:,:,1].T
 
 
 #RF.score(X_test_new,y_test)
@@ -75,43 +75,50 @@ y_preds = np.array(RF.predict_proba(X_test_new))[:,:,1].T
 #y_preds = np.array(RF.predict_proba(X_test_new))[:,:,1].T
 y = np.array(RF.predict(X_test_new))
 
-customers = {}
+# customers = {}
+#
+# class customer:
+#     def __init__( self, sum_saving, sum_guarantee, sum_current, sum_derivada,
+#     sum_payroll, sum_junior, sum_maspart, sum_part, sum_partplus, sum_stdep,
+#     sum_mtdep, sum_ltdep, sum_eacct, sum_fund, sum_mortgage, sum_pension,
+#     sum_loan, sum_tax, sum_credit, sum_security, sum_home, sum_nompayroll,
+#     sum_nompension, sum_debit ):
+#         self.products = [sum_saving == 0, sum_guarantee == 0, sum_current == 0,
+#         sum_derivada == 0, sum_payroll == 0, sum_junior == 0, sum_maspart == 0,
+#         sum_part == 0, sum_partplus == 0, sum_stdep == 0, sum_mtdep == 0,
+#         sum_ltdep == 0, sum_eacct == 0, sum_fund == 0, sum_mortgage == 0,
+#         sum_pension == 0, sum_loan == 0, sum_tax == 0, sum_credit == 0,
+#         sum_security == 0, sum_home == 0, sum_nompayroll == 0,
+#         sum_nompension == 0, sum_debit == 0]
+#     def new_products( self, products ):
+#         things = []
+#         for ind, thing in enumerate(self.products):
+#             if thing == False and products[ind] == 1: #new products
+#                 things.append( str( target_cols[ind] ) )
+#         return ' '.join( things )
 
-class customer:
-    def __init__( self, sum_saving, sum_guarantee, sum_current, sum_derivada,
-    sum_payroll, sum_junior, sum_maspart, sum_part, sum_partplus, sum_stdep,
-    sum_mtdep, sum_ltdep, sum_eacct, sum_fund, sum_mortgage, sum_pension,
-    sum_loan, sum_tax, sum_credit, sum_security, sum_home, sum_nompayroll,
-    sum_nompension, sum_debit ):
-        self.products = [sum_saving == 0, sum_guarantee == 0, sum_current == 0,
-        sum_derivada == 0, sum_payroll == 0, sum_junior == 0, sum_maspart == 0,
-        sum_part == 0, sum_partplus == 0, sum_stdep == 0, sum_mtdep == 0,
-        sum_ltdep == 0, sum_eacct == 0, sum_fund == 0, sum_mortgage == 0,
-        sum_pension == 0, sum_loan == 0, sum_tax == 0, sum_credit == 0,
-        sum_security == 0, sum_home == 0, sum_nompayroll == 0,
-        sum_nompension == 0, sum_debit == 0]
-    def new_products( self, products ):
-        things = []
-        for ind, thing in enumerate(self.products):
-            if thing == False and products[ind] == 1: #new products
-                things.append( str( target_cols[ind] ) )
-        return ' '.join( things )
+def products( prods ):
+    things = []
+    for ind, thing in enumerate(prods):
+        if thing == 1:
+            things.append( str (target_cols[ind] ) )
+    return ' '.join( things )
 
-for i in range( 0, len( data['custo'] ) ):
-    customers[data['custo'][i]] = customer( data['sum_saving'][i],
-    data['sum_guarantee'][i], data['sum_current'][i],
-    data['sum_derivada'][i], data['sum_payroll'][i], data['sum_junior'][i],
-    data['sum_maspart'][i], data['sum_part'][i], data['sum_partplus'][i],
-    data['sum_stdep'][i], data['sum_mtdep'][i], data['sum_ltdep'][i],
-    data['sum_eacct'][i], data['sum_fund'][i], data['sum_mortgage'][i],
-    data['sum_pension'][i], data['sum_loan'][i], data['sum_tax'][i],
-    data['sum_credit'][i], data['sum_security'][i], data['sum_home'][i],
-    data['sum_nompayroll'][i], data['sum_nompension'][i], data['sum_debit'][i] )
+# for i in range( 0, len( data['custo'] ) ):
+#     customers[data['custo'][i]] = customer( data['sum_saving'][i],
+#     data['sum_guarantee'][i], data['sum_current'][i],
+#     data['sum_derivada'][i], data['sum_payroll'][i], data['sum_junior'][i],
+#     data['sum_maspart'][i], data['sum_part'][i], data['sum_partplus'][i],
+#     data['sum_stdep'][i], data['sum_mtdep'][i], data['sum_ltdep'][i],
+#     data['sum_eacct'][i], data['sum_fund'][i], data['sum_mortgage'][i],
+#     data['sum_pension'][i], data['sum_loan'][i], data['sum_tax'][i],
+#     data['sum_credit'][i], data['sum_security'][i], data['sum_home'][i],
+#     data['sum_nompayroll'][i], data['sum_nompension'][i], data['sum_debit'][i] )
 
 with open('submission.csv', 'w') as outf:
     outf.write('ncodpers,added_products\n')
     for ind, thing in enumerate( y ):
-        outf.write( str( testdata['custo'][ind] ) + ',' + customers[testdata['custo'][ind]].new_products( thing ) + '\n' )
+        outf.write( str( testdata['custo'][ind] ) + ',' + products( thing ) + '\n' )
 
 # conf_mat = []
 #
