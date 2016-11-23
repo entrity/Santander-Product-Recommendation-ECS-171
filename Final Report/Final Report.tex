@@ -45,6 +45,8 @@
 	 Our topic is specified in the Santander Kaggle competition. Our goal is to predict which products customers will purchase next month based on behavioral and demographic data from the 1.5 years. To solve this, we use four different machine learning methods: logistic regression, SVM, random forest and XGBoost. Since the data size is large and there is no clear response variable in the training set, different subteams use different subsets of the original training set and build their own response variables. Thus, it is difficult to compare the four different methods. The logistic regression and SVM subteams both build 24 classifiers for 24 products and the accuracy is high, which is above 0.9. However, we cannot say these two classifiers are powerful, because the training set is quite unbalanced. The random forest and XGboost both build only one multi-classifier model. The accuracy for these two are 0.90 and 0.63. As these two subteams use different data cleaning method and response variable, we cannot say random forest is better than XGboost. In summary, all four methods could provide reasonable predictions and this would help the Santander Bank to build a more effective recommendation system.
 \end{abstract}
 
+\newpage
+
 \section{Introduction}
 This project is aimed at building a more effective recommendation system. Through this system, Santander can predict which products their existing customers will buy in the next month based on their past behavior and that of similar customers. One of the difficulties is how to deal with the large data set. Indeed, the original data set contains 13 million records from January 2015 to June 2016, with almost 1 million customers. How to deal with the large data set and transform the data to the model are the core problems of this project.
 
@@ -170,7 +172,7 @@ Random forests scale very well with large input sizes. The bagging process resul
 
 \subsection{Discussion}
 
-As expected the benefits of the random forest can be seen in how our classification accuracy grows with the number of trees and tree depth. The very high accuracy for the forest of tree size one is most likely because most customers did not buy new products.
+As expected our classification accuracy grows with tree size and depth. However due to the flattening process we may have lost information about time trends relating to customer behavior. To improve the model we could have used a categorical variable for the month to capture seasonal effects.
 
 \subsection{Reproduction}
 Run \texttt{fixdata.py} to generate cleaned data, and then run \texttt{flatten.py} to flatten data. Run \texttt{fitmodel.py}. To adjust parameters, modify \texttt{fitmodel.py}. For the final model run \texttt{kaggletest.py} which generates a model using all the data.
@@ -181,26 +183,24 @@ Run \texttt{fixdata.py} to generate cleaned data, and then run \texttt{flatten.p
 \begin{enumerate}
 	\item Independent Variable Selection
 
-	In order to increase the accuracy of model and efficiency of calculation, remove should remove some independent variables. (1) We delete variables with too many levels for they are hard to be transformed into dummy variables. (2) We leave out independent variables that have repeated information. (3) We will not include  variables predominated by missing values.
+	To increase model efficiency and accuracy we removed irrelevant features. (1) We delete discrete variables with too many classes since they are hard to transform into dummy variables. (2) We leave out independent variables with repeated information. (3) We removed variables with predominantly missing values.
 
 	According to these three  rules, we remove : pais\_residencia, fecha\_alta, indext, conyuemp, canal\_entrada, tipodom, cod\_prov and nomprov.
 
 	\item  Missing values
 
-	For the cases have missing values in any of the 24 dependent variables, we remove them for the reason that these missing values only proportion less than 1\% and did not show no obvious pattern.
+	For the cases having missing values in any of the 24 dependent variables, we remove them. This case occurs < 1\% of the time and has no obvious pattern.
 
 	\item Data Transformation
 
-	For independent variables, we transform the categorical variables into dummy variable. For the variable with n levels, we create (n-1) dummy variables. Besides, aimed to avoid influence of units and scales, we standardize the continuous variables.
-
-	Thus, we could predict additional products consumers would buy for next month given their personal characteristics and consumption records at current month.
+	We transform categorical variables to dummy variables, and standardize the continuous variables.
 \end{enumerate}
 
 \subsection{SVM Model}
 
 SVM is the supervised learning model for classification. With associated learning algorithms, a line or a hyper-plane is found to classify the data.
 
-In our case, we want classifier to be less sensitive to outliers to keep the margin sufficiently large. To do so, we introduce “slack variables” that allow samples to be misclassified.Besides, we introduce the idea of kernel. Consequently, we have :
+We want a classifier that is less sensitive to outliers. To do so, we introduce “slack variables” that allow samples to be misclassified. We also utilize kernels.
 
 Decision function:
 $$f(x) = \displaystyle\sum_{i}\alpha_i\Phi(x_i)\Phi(x)+b = \displaystyle\sum_{i}\alpha_{i} K(x_i, x)+b$$, where $K(x_i, x)$ is the Kernel function.
@@ -210,11 +210,11 @@ $$min P(w,b) = \frac{1}{2}(||\displaystyle\sum_{i=1}^{m}\alpha_i\Phi(x_i)||)^2 +
 
 \subsection{Results}
 
-Initially, we use accuracy to estimate the results. For each of the 24 estimations, the accuracy is higher than 99\% which indicates a high performance of the model. In this case, the overall accuracy rate is 98\% which shows that SVM produces an accurate result.
+For each of the 24 estimations, the accuracy is higher than 99\% which indicates a high performance of the model.
 
 \subsection{Discussion}
 
-However, scrutiny of the data reveals simply focusing on the accuracy is not reasonable. For most dependent variables, the negative class 0 is predominant. Thus, since the majority of predictions are 0, incorrect 1 predictions do not influence accuracy much. To examine this idea, we choose 3 dependent variables with asymmetric distribution in 0s and 1s, and then use ROC and PRC to exhibit the results:
+However, scrutiny of the data reveals simply focusing on the accuracy is not reasonable. For most dependent variables, the negative class 0 dominates. Thus, since the majority of predictions are 0, incorrect 1 predictions do not influence accuracy much. To examine this idea, we choose 3 dependent variables with asymmetric distribution in 0s and 1s, and then use ROC and PRC to exhibit the results:
 
 \vspace{5mm}
 \begin{tabular}{| l | l | l |}
@@ -226,16 +226,16 @@ However, scrutiny of the data reveals simply focusing on the accuracy is not rea
 \end{tabular}
 \vspace{5mm}
 
-Although accuracy is very high, the model is useless since we are interested in helping the bank recommend products. Thus, true positives are necessary. Failing to consider other metrics of evaluation like precision and recall would lead to an unjustified model. Here the recall is 0 and the precision is NA because there is not a single observation being classified as 1. The reason is that the negative class 0 is predominant in "ind\_cco\_fin\_ult1" and the model tends to classify everything as 0, producing that all the 1’s are classified as 0. The results are even worse for the other two variables as the class 1 are fewer.
+Although accuracy is very high, the model is useless since we are interested in helping the bank recommend products. Thus, true positives are necessary. Failing to consider other metrics of evaluation like precision and recall would lead to an unjustified model. Here the recall is 0 and the precision is NA because there is not a single observation being classified as 1. The reason is that the negative class 0 is predominant in "ind\_cco\_fin\_ult1" and the model tends to classify everything as 0, so many true 1’s are incorrectly classified 0. The results are even worse for the other two variables as class 1's are sparser.
 
 ROC and PRC curve for "ind\_cco\_fin\_ult1" , "ind\_fond\_fin\_ult1" and "ind\_deme\_fin\_ult1"
 
 \begin{multicols}{2}
 \vspace{5mm}
-\includegraphics[scale = 0.5]{ROCandPR.png}
+\includegraphics[scale = 0.3]{ROCandPR.png}
 \vspace{5mm}
 
-\includegraphics[scale = 0.5]{ROCwithandwithoutweights.png}
+\includegraphics[scale = 0.3]{ROCwithandwithoutweights.png}
 
 
 \end{multicols}
@@ -310,8 +310,6 @@ Although limiting the dataset to $1/2^6$ of its original size may hurt generaliz
 In future, we might perform further feature reduction. On a typical example from our 24 regressions, 251 non-zero weights remained. Nevertheless, only 19 weights measured greater than 0.00001.
 
 Our decisions for how to fill in missing values also likely contribute to some inaccuracy in our model.
-
-\newpage
 
 \section{Author Contributions}
 
