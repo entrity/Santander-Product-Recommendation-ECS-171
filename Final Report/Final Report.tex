@@ -42,12 +42,41 @@
 		\begin{large}
 
 \begin{abstract}
-	 Our topic is specified in the Santander Kaggle competition. Our goal is to predict which products customers will purchase next month based on behavioral and demographic data from the 1.5 years. To solve this, we use four different machine learning methods: logistic regression, SVM, random forest and XGBoost. Since the data size is large and there is no clear response variable in the training set, different subteams use different subsets of the original training set and build their own response variables. Thus, it is difficult to compare the four different methods. The logistic regression and SVM subteams both build 24 classifiers for 24 products and the accuracy is high, which is above 0.9. However, we cannot say these two classifiers are powerful, because the training set is quite unbalanced. The random forest and XGboost both build only one multi-classifier model. The accuracy for these two are 0.90 and 0.63. As these two subteams use different data cleaning method and response variable, we cannot say random forest is better than XGboost. In summary, all four methods could provide reasonable predictions and this would help the Santander Bank to build a more effective recommendation system.
+	 Our topic is specified in the Santander Kaggle competition. Our goal is to predict which products customers will purchase next month based on behavioral and demographic data from the 1.5 years. To solve this, we use four different machine learning methods: logistic regression, SVM, random forest and XGBoost. Since the data size is large and there is no clear response variable in the training set, different subteams use different subsets of the original training set and build their own response variables. Thus, it is difficult to compare the four different methods. We find that all four methods could provide reasonable predictions and this would help the Santander Bank to build a more effective recommendation system.
 \end{abstract}
+
+\section{Author Contributions}
+
+
+\begin{multicols}{2}
+
+\textbf{XGBoost} \\
+Xinyi Hou: Lead the project as a whole, pre-processed data, tune parameter and wrote final abstract. \\
+Yingxi Yu:  Wrote the model code,tune parameter and made the powerpoint. \\
+Wenyu Li: Wrote model code, tune parameter and the group's report. \\
+Yuan Xu:  Worked on the group's report and tune parameter. \\
+\textbf{Random Forest} \\
+Charlton Lin: Created the flattening and feature engineering, and worked on conforming to Kaggle standards. \\
+Qiaojuan Niu : Created the Random Forest model and code to clean the data. \\
+Zoran Dabic: Subgroup report, compiled full report, feature engineering, ran the model and generated results. \\
+\textbf{SVM} \\
+Data processing:Aoran Zhang, Huiyu Bi \\
+Data analysis and interpretation: Meng Li, Zhongyu Fan, Huiyu Bi \\
+Model analysis and interpretation:Aoran Zhang, Meng Li \\
+Drafting the article: Aoran Zhang, Meng Li, Huiyu Bi, Zhongyu Fan \\
+Critical revision of the article:Aoran Zhang, Zhongyu Fan \\
+\textbf{Logistic Regression} \\
+Bowen He:  Data analysis and interpretation, code to create purchase history variables, feature engineering\\
+Yuan Tian:  Data analysis and interpretation, data cleaning code, generated the idea of ETL process, i.e. defining labels and feature space, and revised the report. \\
+Miao Wang:  Data analysis and interpretation, code to create response variables, feature engineering, and revised the report. \\
+Markham Anderson: Wrote the subgroup report, data processing, created Logistic regression model, wrote classifier code and evaluated its performance. \\
+
+\end{multicols}
 
 \newpage
 
 \section{Introduction}
+The logistic regression and SVM subteams both build 24 classifiers for 24 products and the accuracy is high, which is above 0.9. However, we cannot say these two classifiers are powerful, because the training set is quite unbalanced. The random forest and XGboost both build only one multi-classifier model. The accuracy for these two are 0.90 and 0.63. As these two subteams use different data cleaning method and response variable, we cannot say random forest is better than XGboost. 
 
 
 This paper introduces four machine learning methods. In each sub parts, we will introduce the way we clean the data, models and results, and the discussions of this method.
@@ -306,33 +335,7 @@ Our decisions for how to fill in missing values also likely contribute to some i
 
 \end{multicols}
 
-\section{Author Contributions}
 
-
-\begin{multicols}{2}
-
-\textbf{XGBoost} \\
-Xinyi Hou: Lead the project as a whole, pre-processed data, tune parameter and wrote final abstract. \\
-Yingxi Yu:  Wrote the model code,tune parameter and made the powerpoint. \\
-Wenyu Li: Wrote model code, tune parameter and the group's report. \\
-Yuan Xu:  Worked on the group's report and tune parameter. \\
-\textbf{Random Forest} \\
-Charlton Lin: Created the flattening and feature engineering, and worked on conforming to Kaggle standards. \\
-Qiaojuan Niu : Created the Random Forest model and code to clean the data. \\
-Zoran Dabic: Subgroup report, compiled full report, feature engineering, ran the model and generated results. \\
-\textbf{SVM} \\
-Data processing:Aoran Zhang, Huiyu Bi \\
-Data analysis and interpretation: Meng Li, Zhongyu Fan, Huiyu Bi \\
-Model analysis and interpretation:Aoran Zhang, Meng Li \\
-Drafting the article: Aoran Zhang, Meng Li, Huiyu Bi, Zhongyu Fan \\
-Critical revision of the article:Aoran Zhang, Zhongyu Fan \\
-\textbf{Logistic Regression} \\
-Bowen He:  Data analysis and interpretation, code to create purchase history variables, feature engineering\\
-Yuan Tian:  Data analysis and interpretation, data cleaning code, generated the idea of ETL process, i.e. defining labels and feature space, and revised the report. \\
-Miao Wang:  Data analysis and interpretation, code to create response variables, feature engineering, and revised the report. \\
-Markham Anderson: Wrote the subgroup report, data processing, created Logistic regression model, wrote classifier code and evaluated its performance. \\
-
-\end{multicols}
 
 \begin{thebibliography}{9}
 
