@@ -39,7 +39,7 @@
 			Zoran Dabic \end{Large}\end{center}
 	\begin{spacing}{1}
 		\begin{large}
-			
+
 \begin{abstract}
 	 Our topic is specified in the Santander product recommendation competition on Kaggle. In detail, our goal is to predict which products the customer will purchase in the next month based on their past 1.5 year of behavioral and demographic data. To solve this problem, we use four different machine learning methods: logistic regression, SVM, random forest and XGBoost. Since the data size is large and there is no clear response variable in the training set, different subteams use different subsets of the original training set and build their own response variable. Thus,it is difficult to compare the four different methods. The logistic regression and SVM subteams both build 24 classifiers for 24 products and the accuracy is high, which is above 0.9. However, we cannot say these two classifiers are powerful, because the training set is quite unbalanced. The random forest and XGboost both build only one multi-classifier model. The accuracy for these two are 0.90 and 0.63. As these two subteams use different data cleaning method and response variable, we cannot say random forest is better than XGboost. In summary, all four methods could provide reasonable predictions and this would help the Santander Bank to build a more effective recommendation system.
 \end{abstract}
@@ -59,7 +59,7 @@ This paper introduces four machine learning methods. In each sub parts, we will 
 
 \subsection{Data Pre-processing}
 
-\noindent \indent Since there are many missing values and outliers, the first thing is to clean data. 27334 records with 9 consecutive NA values are deleted and the extreme values (for an instance, the 99 percent quantile of the age variable is 88 years old) are excluded. After exploring the original data, we decide to use 32 features to predict the response. For the \verb|"age"|, \verb|"antiguedad"| and \verb|"renta"|, we cut them into 5 intervals and they also become categorical features now. 
+\noindent \indent Since there are many missing values and outliers, the first thing is to clean data. 27334 records with 9 consecutive NA values are deleted and the extreme values (for an instance, the 99 percent quantile of the age variable is 88 years old) are excluded. After exploring the original data, we decide to use 32 features to predict the response. The 32 features include \verb|"pais_residencia"|, \verb|"age"|, \verb|"ind_nuevo"|, \verb|"antiguedad"|, \verb|"ind_empleado"|, \verb|"renta"|, \verb|"ind_actividad_cliente"|, \verb|"segmento"| and 24 product status. For the \verb|"age"|, \verb|"antiguedad"| and \verb|"renta"|, we cut them into 5 intervals and they also become categorical features now.
 
 The response is the additional product which the customer would add in the next month. If the customer adds more than one product, we only randomly pick one of them. To make the data size smaller and the problem easier, we subset the samples with nonzero response, which means we only consider the records with additional product.
 
@@ -76,11 +76,11 @@ L(\theta) = \sum_{i}(y_i - \hat{y_i})^2
 \[
 \Omega(f) = \gamma T + \frac{1}{2}\lambda\sum_{j = 1}^{T}(w_j)^2
 \]
- 
 
 
 
-\subsection{Results} 
+
+\subsection{Results}
 
 \noindent \indent Different from some other groups, we only apply the algorithm once and fit a multi-classifier model. We randomly pick 70\% of the data to be the training data, and the rest 30\% to be the test set. By changing the main parameters \cite{xg3} max.depth among 5, 6, 7, the number of trees among 10, 50, 100, and the step size among 0.1, 0.5, 1, we get the results displayed in the tables as below.
 \begin{table}[h]
@@ -133,7 +133,7 @@ Due to the vague description of the problem, we are not sure how many new produc
 This subgroup consists of fours members, Xinyi Hou, Yingxi Yu, Wenyu Li, and Yuan Xu. Everyone in this subgroup gathered together to discuss how to tackle the problem, determine the method and tune parameters. More specifically, Xinyi was the leader of the whole big project group, pre-processed the data and wrote the abstract of the overall report; Yingxi wrote the initial model code and made the popwerpoint; Wenyu participated in initial model code writing and completed the report; and Yuan mainly focused on the report.
 
 \section{Random Forest}
-	
+
 \subsection{Data Analysis}
 
 We transform the data from time series to stationary data using a flattening process. Random forests do not handle time series very well. Had we not transformed the data we would have had to worry about how the training and testing subsets were selected to ensure that future data is not used to predict past data. In addition, a decision tree cannot split on a non repeating independent variable such as time to produce any useful results.
@@ -147,7 +147,7 @@ Since the Kaggle provided test data does not include the true classifications, w
 \subsection{Method}
 
 \paragraph{Random Forest}
-We use a random forest model with 100 trees. A RF model uses decision trees as weak predictors of the response variable to produce a strong predictor in the random forest. Each tree is produced on a random subset of samples with replacement and would otherwise suffer from over fitting and high variance. At each split a random subset of features without replacement is used to find the best split. Each tree produces a classification and the mode of the classifications becomes the forest's overall classification for the sample. However for our model, sklearn instead averages the probability of predicting a class across all trees.\cite{rnSKlearn}  The out of bag samples for each tree is used to test the tree and provide an unbiased estimator of the classification error.\cite{rnLeo} 
+We use a random forest model with 100 trees. A RF model uses decision trees as weak predictors of the response variable to produce a strong predictor in the random forest. Each tree is produced on a random subset of samples with replacement and would otherwise suffer from over fitting and high variance. At each split a random subset of features without replacement is used to find the best split. Each tree produces a classification and the mode of the classifications becomes the forest's overall classification for the sample. However for our model, sklearn instead averages the probability of predicting a class across all trees.\cite{rnSKlearn}  The out of bag samples for each tree is used to test the tree and provide an unbiased estimator of the classification error.\cite{rnLeo}
 
 \paragraph{The Decision Tree}
 Each split is made with respect to a random subset of features. The optimal split is chosen to minimize the impurity of the node being split on. The Gini impurity function is a common function to use. In all cases the goal is to split such that samples are grouped together by label.
@@ -164,14 +164,14 @@ We tested the forest with varying number of trees and maximum depth. As expected
 \begin{table}[h]
 	\centering
 	\begin{tabular}{|c|c|c|c|}
-		\hline 
-		\backslashbox{Trees}{Depth} & 10 & 100 & $\infty$ \\ 
-		\hline 
-		1 & 0.7434 & 0.8594  & 0.8594 \\ 
-		10 & 0.8465 & 0.8956  & 0.8956 \\ 
-		100 & 0.8518 & 0.9044  & 0.8921 \\ 
-		\hline 
-	\end{tabular} 
+		\hline
+		\backslashbox{Trees}{Depth} & 10 & 100 & $\infty$ \\
+		\hline
+		1 & 0.7434 & 0.8594  & 0.8594 \\
+		10 & 0.8465 & 0.8956  & 0.8956 \\
+		100 & 0.8518 & 0.9044  & 0.8921 \\
+		\hline
+	\end{tabular}
 	\caption{Model Accuracy vs \# of Trees and Tree Depth}
 	\label{tab:my_label}
 \end{table}
@@ -206,31 +206,31 @@ Run the jupyter project RanForestForFlat.ipynb \\
 \subsection{Data Processing}
 \begin{enumerate}
 	\item Independent Variable Selection
-	
+
 	In order to increase the accuracy of model and efficiency of calculation, remove should remove some independent variables:
-	
+
 	\begin{itemize}
 		\item Since we should transform categorical variables into dummy variables, variables(canal\_ entrada) with too many levels would sharply increase the model complexity and decrease the effectiveness of calculation.
-		
-		\item We also leave out independent variables that have repeated information. For example, indresi(whether residence country is the same as the bank country) and nomprov(i.e Province name) reflect the similar information of the customer so we could only keep one of them. 
-		
-		\item For the independent variables predominated by missing values,such as conyuemp, we leave them out because they could not reflect useful information. 
+
+		\item We also leave out independent variables that have repeated information. For example, indresi(whether residence country is the same as the bank country) and nomprov(i.e Province name) reflect the similar information of the customer so we could only keep one of them.
+
+		\item For the independent variables predominated by missing values,such as conyuemp, we leave them out because they could not reflect useful information.
 	\end{itemize}
-	
-	According to these three  rules, we remove : pais\_residencia, fecha\_alta, indext, conyuemp, canal\_entrada, tipodom, cod\_prov and nomprov. 
-	
+
+	According to these three  rules, we remove : pais\_residencia, fecha\_alta, indext, conyuemp, canal\_entrada, tipodom, cod\_prov and nomprov.
+
 	\item  Missing values
-	
-	For the cases have missing values in any of the 24 dependent variables, we remove them for the reason that these missing values only proportion less than 1\% and did not show no obvious pattern. 
-	
-	As for independent variables, we only find missing values in renta(gross income), we use the regional average to replace the missing values. 
-	
+
+	For the cases have missing values in any of the 24 dependent variables, we remove them for the reason that these missing values only proportion less than 1\% and did not show no obvious pattern.
+
+	As for independent variables, we only find missing values in renta(gross income), we use the regional average to replace the missing values.
+
 	\item Data Transformation
-	
-	For independent variables, we transform the categorical variables into dummy variable. For the variable with n levels, we create (n-1) dummy variables. Besides, aimed to avoid influence of units and scales, we standardize the continuous variables. 
-	
-	Then we process the response variables.  Owing that our goal is to predict what additional products a customer will get in addition to what they already have at the last month. So the value of the next month minus that of the current month.  If the result is “1”, we could figure out the customer bought certain new product i. Otherwise The consumer did not buy new products. 
-	
+
+	For independent variables, we transform the categorical variables into dummy variable. For the variable with n levels, we create (n-1) dummy variables. Besides, aimed to avoid influence of units and scales, we standardize the continuous variables.
+
+	Then we process the response variables.  Owing that our goal is to predict what additional products a customer will get in addition to what they already have at the last month. So the value of the next month minus that of the current month.  If the result is “1”, we could figure out the customer bought certain new product i. Otherwise The consumer did not buy new products.
+
 	Thus, we could build model to predict additional products consumers would buy for next month given their personal characteristics and their consumption records at current month.
 \end{enumerate}
 
@@ -278,7 +278,7 @@ In the following plots, we can observe when the negative class 0 is highly predo
 
 The accuracy here is really high only, which is 99.44\%. However the model is completely useless since we are very interested in helping the bank to recommend products to a potential customer in addition to what he/she already has. Thus, it is very important to correctly classify 1 as 1. Failing to consider other metrics of evaluation like precision and recall would lead to an unjustified model. Here the recall is 0 and the precision is NA because there is not a single observation being classified as 1. The reason for this is that the negative class 0 is predominant in "ind\_cco\_fin\_ult1" and the model tends to classify everything as 0, producing that all the 1’s are classified as 0. The results are even worse for the other two variables as the class 1 are fewer.
 
-ROC and PRC curve for "ind\_cco\_fin\_ult1" , "ind\_fond\_fin\_ult1" and "ind\_deme\_fin\_ult1" 
+ROC and PRC curve for "ind\_cco\_fin\_ult1" , "ind\_fond\_fin\_ult1" and "ind\_deme\_fin\_ult1"
 
 \vspace{5mm}
 \includegraphics[scale = 0.8]{ROCandPR.png}
@@ -310,48 +310,34 @@ We come up with two solutions to deal with this skewed class problem. One is to 
 	Drafting the article: Aoran Zhang, Meng Li, Huiyu Bi, Zhongyu Fan
 	\item
 	Critical revision of the article:Aoran Zhang, Zhongyu Fan
-	
+
 \end{enumerate}
 
 \section{Logistic Regression}
 
 \subsection{Defining a sample (features-to-label pair)}
 
-Interpreting the requirement ``You will predict what additional products a customer will get in the last month, 2016-06-28, in addition to what they already have at 2016-05-28" introduced some room for error: it was unclear to us whether in the final test we were to be given only the previous month's data or the entire history when predicting the purchases of the final month. Examining the file offered as testing data provided no insight because it contained no feature values, only the labels.
-
-Ultimately, we decided by majority vote to define a sample (features-to-label pair) as the values for any two consecutive months for a single customer (identified by ncodpers). Hereafter, the "date" of a sample refers to the earlier of the two months which a features-to-label pair covers, i.e. it is the month from which the feature values are drawn, not the month from which the labels (purchases) are drawn.
+Operating under some ambiguity in the Santander problem description, we resolved to define a sample (features-to-label pair) as the values for any two consecutive months for a single customer (identified by ncodpers). Hereafter, the "date" of a sample refers to the month from which the feature values are drawn, not the month from which the labels (purchases) are drawn.
 
 \subsection{ETL}
 
-Our labels (Y-values) were 24 binary fields corresponding to the Santander products which a customer may have purchased. By comparing the product fields from the data file in a given month to those of the previous month (on an individual-customer basis), we determined when each product was purchased and set the corresponding label to 1 if the purchase took place in the month following the date of the sample, 0 otherwise. (If the purchase took place before the 1.5-year range, it is never included in the label.)
+Our labels (Y-values) are 24 binary fields corresponding to the Santander products which a customer may have purchased. By comparing the product fields from the data file in a given month to those of the previous month (on an individual-customer basis), we determined when each product was purchased and set the corresponding label to 1 if the purchase took place in the month following the date of the sample, 0 otherwise. (If the purchase took place before the 1.5-year range, it is never included in the label.)
 
 For the feature space (X-values), we did following transformation and feature engineering.
 
-Since the previous purchases for each customer in a given month were also useful features to predict his/her purchasing behevior, we added a column for each product that holds the number of months since the customer’s first purchase of that product. So the 24 newly-added columns contained the information of the purchase history for each customer before the given month. 
+We added a column for each product that holds the number of months since the customer’s first purchase of that product. So the 24 newly-added columns contained the information of the purchase history for each customer before the given month.
 
-The variable "fecha\_alta" was the date in which the customer became as the first holder of a contract in the bank. We transformed it into a numeric variable named "memberdays" which was the difference between this date and the given date, i.e., "fecha\_dato". "Memberdays" kept records of how many days the customer had become a Santander member.
+The variable "fecha\_alta" was the date in which the customer first acquired a contract with the bank. We replaced it with a variable "memberdays" which holds the difference between this date and the sample date, i.e. "fecha\_dato".
 
-The feature-value data also had the expected hurdles to pass: dealing with empty values and categorical variables.
+As for categorical features, we replaced them with sets of binary features, as normal. For example, if a given categorical feature had three possible values ${A,B,C}$, we replaced that feature with a binary column for $A$, one for $B$, and one for $C$. Unfortunately, two of our categorical variables had over 100 possible values, so our feature space ballooned, threatening the efficacy of our model and motivating regularization later on.
 
-As for categorical features, we replaced them with sets of binary features, as expected. For example, if a given categorical feature had three possible values ${A,B,C}$, we replaced that feature with a binary column for $A$, a binary column for $B$, and a binary column for $C$; these binary columns have a 1 for rows where the original categorical feature held a value corresponding to the binary column's value and a 0 otherwise.
+A certain 27334 rows each had exactly 9 missing values in all the same columns. We eliminated the troublesome rows. About 10\% of the samples were missing $renta$; so we filled the missing values by using averages based on province.
 
-In most cases, this was straightforward. In some cases (as in the case of $sexo$, i.e. "sex") we had missing values which we preferred to preserve as "missing," so we included a binary column for a "missing" value in $sexo$.
-
-Unfortunately, two of our categorical variables had over 100 possible values, so our feature space ballooned, threatening the efficacy of our model and motivating regularization later on.
-
-Most empty values occurred in two places: the $renta$ column and a certain 27334 rows which each had exactly 9 missing values in all the same columns. We eliminated the troublesome rows, but we preferred not to discard such valuable financial data as rent. About 10\% of the samples were missing $renta$. We undertook to perform a linear regression to infer the missing values, but due to scarcity of time, we ended up filling in the missing rents with the average rent for the province in which the customer lived. In at least one case, no rent data was available for the province in question, so we used the average rent across all available rents, again, expediency forcing sacrifice of accuracy.
-
-Some features were irrelevant for calculation, such as $tipodom$ (address type), and could be discarded easily. Others were used for organizing data but not for calculating regressions: $nomcodpers$ and $fecha\_dato$.
-
-$nom\_prov$ was redundant with $cod\_prov$, so we omitted the former.
+Some features were irrelevant for calculation, such as $tipodom$ (address type), and could be discarded easily. Others were used for organizing data but not for calculating regressions: $nomcodpers$ and $fecha\_dato$. $nom\_prov$ was redundant with $cod\_prov$, so we omitted the former.
 
 \subsection{Limiting the Sample}
 
-The data had become quite large, taking 39GB in R (measured by $object.size()$). We in fact were not able to make progress on our own workstations and were compelled to make use of a cluster owned by the Engineering Department.
-
-Perhaps a tool other than R would have facilitated our work and imposed a lesser cost to system resources, but time constraints dictated that we not start over and develop familiarity with another tool. (Matlab is not available on the Engineering Department's cluster.)
-
-In order to turn out results quickly, we limited the size of the data with which we worked by taking a random sample from the samples produced by our ETL. We experimented with samples of different size and eventually proceeded with a working set of 197968 ($1/2^6$ as many as we produced in ETL). We used a random 10\% of these samples as testing data.
+The data had become quite large, taking 39GB in memory. We were compelled to make use of a cluster owned by the Engineering Department. In order to turn out results quickly and avoid the cost of backtracking, we limited the size of the data with which we worked by taking a random sample from the samples produced by our ETL. We experimented with samples of different size and eventually proceeded with a working set of 197968 ($1/2^6$ as many as we produced in ETL). We used a random 10\% of these samples as testing data.
 
 \subsection{Regression}
 
@@ -379,9 +365,9 @@ For the 24 products (i.e. regressions), we calculated the following mean-squared
 		& 0.006567            & 0.002576   & 0.001667   & 0.001061   & 0.005203   & 0.005607            & 0.006921   \\ \hline
 		0.01 \textless MSE \textless 1     & ctju\_fin:          & ctpp\_fin: & recibo:    &            &            &                     &            \\
 		& 0.999949            & 0.999899   & 0.011517   &            &            &                     &            \\ \hline
-		MSE = 1                            & aval\_fin:          & pres\_fin: &            &            &            &                     &\\            
-		&                    & 1          &1           &            &            &                     & \\ 
-		\hline         
+		MSE = 1                            & aval\_fin:          & pres\_fin: &            &            &            &                     &\\
+		&                    & 1          &1           &            &            &                     & \\
+		\hline
 	\end{tabular}
 \end{table}
 The mean of these errors is 0.1685.
@@ -390,7 +376,7 @@ The mean of these errors is 0.1685.
 
 The results of the logistic regressions are unfortunately suspect. A quick examination shows that the gamut of possible errors is crossed completely: testing errors range from 0 to 1, inclusive. More than likely, the frequency of errors at these two extremes may be explained by the scarcity of purchase data for some products. Even considering all of the Santander data that were supplied, some purchases are so rare that it is entirely conceivable that our random sample contains zero, one, or only a handful of 1's in the corresponding label column. In the event that no 1's are to be found for a given product, it is no wonder that our testing error would be 0; no other error is possible.
 
-Our limitation of the dataset to $1/2^6$ of its original size certainly introduces room for error, but even so, we have almost 200K samples to work with and only 419 features. This is well past the ten-times-the-VC-dimension rule of thumb.\cite{amlbook} 
+Our limitation of the dataset to $1/2^6$ of its original size certainly introduces room for error, but even so, we have almost 200K samples to work with and only 419 features. This is well past the ten-times-the-VC-dimension rule of thumb.\cite{amlbook}
 
 Perhaps a greater amount of feature reduction should have been performed. On a typical example from our 24 regressions, 251 non-zero weights remained. However, only 19 weights measured greater than 0.00001. We intended to perform PCA in order to combat the explosion of features that the bugaboo categorical features imposed: $pais\_residencia$, $canal\_entrada$, and $cod\_prov$ each gave rise to a great many binary features, thereby heightening risk of disproportionately weighting the original categorical columns.
 
@@ -399,18 +385,18 @@ Our decisions for how to fill in missing values also likely contribute to some i
 \subsection{Author contributions}
 \begin{itemize}
 	\item Bowen He:  Worked on data analysis and interpretation, wrote the code to create purchase history variables, worked on feature engineering, combined and revised the discussion part for all groups.
-	
+
 	\item Yuan Tian:  Worked on data analysis and interpretation, created the data cleaning code, generated the idea of ETL process, i.e. defining labels and feature space, and revised the report.
-	
+
 	\item Miao Wang:  Worked on data analysis and interpretation, wrote the code to create response variables, worked on feature engineering, and revised the report.
-	
+
 	\item Markham Anderson: Wrote the subgroup report, worked on data processing, created the Logistic regression model, wrote code to get the classifier and evaluated its performance.
 \end{itemize}
 
 \newpage
 
 \begin{appendices}
-	
+
 	\section{Random Forest Data Processing}
 	\label{appendix:rn_data}
 	\begin{longtable}{p{3cm}|p{5cm}|p{5cm}}
@@ -441,52 +427,52 @@ Our decisions for how to fill in missing values also likely contribute to some i
 		renta & Gross income of the household & Use mean, fill NAs by median household income of different province \\
 		segmento & segmentation: 01 - VIP, 02 - Individuals 03 - college graduated & Use mode \& last \\
 		ind\_ahor\_fin\_ult1 & Saving Account & Timing: Months from fecha\_alta until first fecha\_dato in which product is purchased \& Length: Use sum \\
-		
-		
+
+
 	\end{longtable}
-	
+
 \end{appendices}
 
 \begin{thebibliography}{9}
-	
+
 	\bibitem{xg1}
 	Tianqi Chen, Carlos Guestrin
 	\emph{XGBoost: A Scalable Tree Boosting System}. Preprint.
-	
+
 	\bibitem{xg2}
 	\emph{Awesome XGBoost}.
 	https://github.com/dmlc/xgboost/tree/master/demo
-	
+
 	\bibitem{xg3}
 	\emph{XGBoost Parameters}.
 	http://xgboost.readthedocs.io/en/latest//parameter.html
-	
-	\bibitem{rnLeo} 
-	Breiman, Leo and Cutler, Adele 
-	\textit{Random Forest}. 
+
+	\bibitem{rnLeo}
+	Breiman, Leo and Cutler, Adele
+	\textit{Random Forest}.
 	\\\texttt{https://www.stat.berkeley.edu/~breiman/RandomForests/cc\_home.htm}
-	
-	\bibitem{rnSKlearn} 
+
+	\bibitem{rnSKlearn}
 	Scikit Learn,
-	\textit{Ensemble Methods}. 
+	\textit{Ensemble Methods}.
 	\\\texttt{http://scikit-learn.org/stable/modules/ensemble.html}
-	
+
 	\bibitem{book1}
 	Gareth James, Daniela Witten, Trevor Hastie, Robert Tibshirani, \textit{An Introduction to Statistical Learning}. New York, USA: Springer, 2013.
-	
+
 	\bibitem{book2}
 	Trevor Hastie, Robert Tibshirani, Jerome Friedman, \textit{The Elements of Statistical Learning}. New York, USA: Springer, 2008.
-	
+
 	\bibitem{Amlbook}
 	Yaser S. Abu-Mosta, Malik Magdon-Ismail, Hsuan-Tien Lin, \textit{Learning From Data: A Short Course}. New York, USA: AMLBook, 2012.
-	
+
 	\bibitem{book}Kevin, P. Murphy, \textit{Machine Learning: A Probabilistic Perspective}. London, England:The MIT Press, Cambridge Massachusetts, 2012.
-	
+
 	\bibitem{paper1}
 	herkassky, Vladimir, and Yunqian Ma, \textit{Practical selection of SVM parameters and noise estimation for SVM regression}. Neural networks 17.1 (2004): 113-126.
-	
+
 	\bibitem{paper2}
-	Yehuda Koren, Robert Bell, and  Chris Volinsky, 
+	Yehuda Koren, Robert Bell, and  Chris Volinsky,
 	\textit{Matrix Factorization Techniques for Recommender Systems}. IEEE Computer Society, 2009.
 \end{thebibliography}
 
