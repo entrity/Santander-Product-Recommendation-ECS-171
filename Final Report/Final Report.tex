@@ -5,6 +5,7 @@
 \usepackage{graphicx,epsfig,latexsym,subfig}
 \usepackage{amsmath,amsthm,amsfonts,amscd,amssymb,bm,mathtools,setspace,fancyhdr,commath,mathrsfs,mathtools,dsfont,tikz-cd,soul,booktabs,longtable,diagbox}
 \usepackage{tikz}
+\usepackage{multicol}
 \usepackage{tkz-euclide}
 \usetkzobj{all}
 \usetikzlibrary{calc,decorations.markings}
@@ -142,6 +143,8 @@ We use a random forest model with 100 trees. A RF model uses decision trees as w
 Random forests scale very well with large input sizes. The bagging process results in a strong predictor over all the trees. The random forest can also handle our categorical variables directly so we will not have to generate dummy variables for the categories. Additionally, the random forest supports multi-label classification so we don't have to separately fit model for each response variable.
 
 \subsection{Results}
+
+\begin{multicols}{2}
 \begin{table}[H]
 	\centering
 	\begin{tabular}{|c|c|c|c|}
@@ -157,11 +160,13 @@ Random forests scale very well with large input sizes. The bagging process resul
 	\label{tab:my_label}
 \end{table}
 
+\begin{figure}[H]
+	\includegraphics[width = 7cm]{ROC.png}
+	\caption{ROC for 100 trees with depth of 10}
+\end{figure}
 
-\subsection{ROC for 100 trees with depth of 10}
-\begin{center}
-	\includegraphics[width = 5cm]{ROC.png}
-\end{center}
+
+\end{multicols}
 
 \subsection{Discussion}
 
@@ -225,9 +230,15 @@ Although accuracy is very high, the model is useless since we are interested in 
 
 ROC and PRC curve for "ind\_cco\_fin\_ult1" , "ind\_fond\_fin\_ult1" and "ind\_deme\_fin\_ult1"
 
+\begin{multicols}{2}
 \vspace{5mm}
 \includegraphics[scale = 0.5]{ROCandPR.png}
 \vspace{5mm}
+
+\includegraphics[scale = 0.5]{ROCwithandwithoutweights.png}
+
+
+\end{multicols}
 
  To solve this problem, we add higher weights to the minority class which would encourage the model to be gear towards classifying 1 as 1 and add some penalty for model to predict 0. The results are as follows. It is shown that all class 1’s are correctly classified! Now the precision and recall are 1.64\% and 100\%. But there is some inevitable trade offs as in general one of these two metric gets better, the other will get worse. Additionally, since we add more penalty when the model predicts 0, there are plenty of class 0 being misclassified which leads to accuracy decreasing to 66.51 as well as decreasing in specifity. However, in our case, recall should be the first priority as we do not want to lose any potential customers, we should accept this trade off. It is also worth noting that another downside is that the process for training model is more time consuming than before.
 
@@ -240,8 +251,6 @@ ROC and PRC curve for "ind\_cco\_fin\_ult1" , "ind\_fond\_fin\_ult1" and "ind\_d
 	\hline
 \end{tabular}
 \vspace{5mm}
-
-\includegraphics[scale = 0.5]{ROCwithandwithoutweights.png}
 
 \section{Logistic Regression}
 
