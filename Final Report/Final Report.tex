@@ -53,13 +53,10 @@ This paper introduces four machine learning methods. In each sub parts, we will 
 
 \section{XGBoost}
 
-\subsection{Methods}
-
-\noindent \indent XGBoost is short for ``Extreme Gradient Boosting" and is widely used in machine learning problems, especially classification problems\cite{xg1}\cite{xg2}.
 
 \subsection{Data Pre-processing}
 
-\noindent \indent Since there are many missing values and outliers, the first thing is to clean data. 27334 records with 9 consecutive NA values are deleted and the extreme values (for an instance, the 99 percent quantile of the age variable is 88 years old) are excluded. After exploring the original data, we decide to use 32 features to predict the response. For the \verb|"age"|, \verb|"antiguedad"| and \verb|"renta"|, we cut them into 5 intervals and they also become categorical features now.
+\noindent \indent Since there are many missing values and outliers, the first thing is to clean data. 27334 records with 9 consecutive NA values are deleted and the extreme values (for an instance, the 99 percent quantile of the age variable is 88 years old) are excluded. After exploring the original data, we decide to use 32 features to predict the response. For the \verb|"age"|, \verb|"antiguedad"| and \verb|"renta"|, we cut them into 5 intervals and they also become categorical features now. 
 
 The response is the additional product which the customer would add in the next month. If the customer adds more than one product, we only randomly pick one of them. To make the data size smaller and the problem easier, we subset the samples with nonzero response, which means we only consider the records with additional product.
 
@@ -133,19 +130,21 @@ Due to the vague description of the problem, we are not sure how many new produc
 This subgroup consists of fours members, Xinyi Hou, Yingxi Yu, Wenyu Li, and Yuan Xu. Everyone in this subgroup gathered together to discuss how to tackle the problem, determine the method and tune parameters. More specifically, Xinyi was the leader of the whole big project group, pre-processed the data and wrote the abstract of the overall report; Yingxi wrote the initial model code and made the popwerpoint; Wenyu participated in initial model code writing and completed the report; and Yuan mainly focused on the report.
 
 \section{Random Forest}
-	
+
 \subsection{Data Analysis}
 
-Random forests do not handle time series very well. Had we not transformed the data we would have had to worry about how the training and testing subsets were selected to ensure that future data is not used to predict past data. In addition, a decision tree cannot split on a non repeating independent variable such as time to produce any useful results. So we would have had to generate features to capture the time trend.
+We transform the data from time series to stationary data using a flattening process. Random forests do not handle time series very well. Had we not transformed the data we would have had to worry about how the training and testing subsets were selected to ensure that future data is not used to predict past data. In addition, a decision tree cannot split on a non repeating independent variable such as time to produce any useful results.
 
-In general we filled NA values with the mode of the value across all customers if it was categorical. We moved the outliers for age to the median of the age category (above or below 30). 
-For testing, we flattened the time-series data such that each customer only had 1 row. We generally used aggregates of the users' columns, such as the mode for that user over time. 
-Since Kaggle does not provide true classes in 2016-6, our testing set uses product classes from 2016-5 as true predictor variables for each customer.
+See \textbf{Appendix \ref{appendix:rn_data}} for what columns are removed, and how other columns are transformed.
+
+
+\subsection{Testing}
+Since the Kaggle provided test data does not include the true classifications, we flatten the training set on all months save for the last month: 2016-5. The product classifications from 2015-1 to 2016-4 is used as our true predictor variables for each customer.
 
 \subsection{Method}
 
 \paragraph{Random Forest}
-We use a random forest model with 100 trees. A RF model uses decision trees as weak predictors of the response variable to produce a strong predictor in the random forest. Each tree is produced on a random subset of samples with replacement and would otherwise suffer from over fitting and high variance. At each split a random subset of features without replacement is used to find the best split. Each tree produces a classification and the mode of the classifications becomes the forest's overall classification for the sample. However for our model, sklearn instead averages the probability of predicting a class across all trees.\cite{rnSKlearn}  The out of bag samples for each tree is used to test the tree and provide an unbiased estimator of the classification error.\cite{rnLeo} 
+We use a random forest model with 100 trees. A RF model uses decision trees as weak predictors of the response variable to produce a strong predictor in the random forest. Each tree is produced on a random subset of samples with replacement and would otherwise suffer from over fitting and high variance. At each split a random subset of features without replacement is used to find the best split. Each tree produces a classification and the mode of the classifications becomes the forest's overall classification for the sample. However for our model, sklearn instead averages the probability of predicting a class across all trees.\cite{rnSKlearn}  The out of bag samples for each tree is used to test the tree and provide an unbiased estimator of the classification error.\cite{rnLeo}
 
 \paragraph{The Decision Tree}
 Each split is made with respect to a random subset of features. The optimal split is chosen to minimize the impurity of the node being split on. The Gini impurity function is a common function to use. In all cases the goal is to split such that samples are grouped together by label.
@@ -155,30 +154,29 @@ Each split is made with respect to a random subset of features. The optimal spli
 Random forests scale very well with large input sizes. The bagging process results in a strong predictor over all the trees. The random forest can also handle our categorical variables directly so we will not have to generate dummy variables for the categories. Additionally, the random forest supports multi-label classification so we don't have to separately fit model for each response variable.
 
 \subsection{Results}
-\begin{table}[H]
-	\centering
-	\begin{tabular}{|c|c|c|c|}
-		\hline 
-		\backslashbox{Trees}{Depth} & 10 & 100 & $\infty$ \\ 
-		\hline 
-		1 & 0.7434 & 0.8594  & 0.8594 \\ 
-		10 & 0.8465 & 0.8956  & 0.8956 \\ 
-		100 & 0.8518 & 0.9044  & 0.8921 \\ 
-		\hline 
-	\end{tabular} 
-	\caption{Model Accuracy vs \# of Trees and Tree Depth}
-	\label{tab:my_label}
-\end{table}
 
 \subsection{Forest Tuning}
 
 We tested the forest with varying number of trees and maximum depth. As expected, accuracy increased with tree size and depth. Ultimately we chose a tree size of 100 and maximum depth of 100.
-
+\begin{table}[h]
+	\centering
+	\begin{tabular}{|c|c|c|c|}
+		\hline
+		\backslashbox{Trees}{Depth} & 10 & 100 & $\infty$ \\
+		\hline
+		1 & 0.7434 & 0.8594  & 0.8594 \\
+		10 & 0.8465 & 0.8956  & 0.8956 \\
+		100 & 0.8518 & 0.9044  & 0.8921 \\
+		\hline
+	\end{tabular}
+	\caption{Model Accuracy vs \# of Trees and Tree Depth}
+	\label{tab:my_label}
+\end{table}
 
 
 \subsection{ROC for 100 trees with depth of 10}
 \begin{center}
-	\includegraphics[width = 5cm]{ROC.png}
+	\includegraphics[width = 15cm]{ROC.png}
 \end{center}
 
 \subsection{Discussion}
@@ -193,7 +191,12 @@ Qiaojuan Niu : Created the Random Forest model and code to clean the data.
 Zoran Dabic: Wrote the subgroup report, compiled together the full report, worked on feature engineering, and ran the flatten and clean code to generate the final data sets.
 
 \subsection{Reproduction}
-Run \texttt{fixdata.py} to generate cleaned data, and then run \texttt{flatten.py} to flatten data. Run \texttt{fitmodel.py}. To adjust parameters, modify \texttt{fitmodel.py}. For the final model run \texttt{kaggletest.py} which generates a model using all the data.
+
+Install Jupyter with the latest version of python. \\
+Download the training and testing data from the Santander competition page. \\
+Run fixData.py in the same directory as the training and testing data. This will generate fixed versions of the data sets. \\
+Run flattenClean.py to create flattened versions of the fixed data sets. \\
+Run the jupyter project RanForestForFlat.ipynb \\
 
 \section{SVM}
 
@@ -215,11 +218,11 @@ Run \texttt{fixdata.py} to generate cleaned data, and then run \texttt{flatten.p
 
 	\item  Missing values
 
-	For the cases have missing values in any of the 24 dependent variables, we remove them for the reason that these missing values only proportion less than 1\% and did not show no obvious pattern.
+	For the cases have missing values in any of the 24 dependent variables, we remove them for the reason that these missing values only proportion less than 1\% and did not show no obvious pattern. 
 
 	\item Data Transformation
 
-	For independent variables, we transform the categorical variables into dummy variable. For the variable with n levels, we create (n-1) dummy variables. Besides, aimed to avoid influence of units and scales, we standardize the continuous variables.
+	For independent variables, we transform the categorical variables into dummy variable. For the variable with n levels, we create (n-1) dummy variables. Besides, aimed to avoid influence of units and scales, we standardize the continuous variables. 
 
 	Thus, we could predict additional products consumers would buy for next month given their personal characteristics and consumption records at current month.
 \end{enumerate}
@@ -299,23 +302,35 @@ ROC and PRC curve for "ind\_cco\_fin\_ult1" , "ind\_fond\_fin\_ult1" and "ind\_d
 
 \subsection{Defining a sample (features-to-label pair)}
 
-With some ambiguity in the Santander description, we defined a sample (features-to-label pair) as the values for any two consecutive months for a single customer. The "date" of a sample refers to the earlier of these two months.
+Operating under some ambiguity in the Santander problem description, we resolved to define a sample (features-to-label pair) as the values for any two consecutive months for a single customer (identified by ncodpers). Hereafter, the "date" of a sample refers to the month from which the feature values are drawn, not the month from which the labels (purchases) are drawn.
 
 \subsection{ETL}
 
-Our labels (Y-values) are 24 binary fields corresponding to the Santander products which a customer may have purchased. We determined when each product was purchased and set the corresponding Y-value to 1 if the purchase took place in the month after the date of the sample, 0 otherwise.
+Our labels (Y-values) are 24 binary fields corresponding to the Santander products which a customer may have purchased. By comparing the product fields from the data file in a given month to those of the previous month (on an individual-customer basis), we determined when each product was purchased and set the corresponding label to 1 if the purchase took place in the month following the date of the sample, 0 otherwise. (If the purchase took place before the 1.5-year range, it is never included in the label.)
 
-For the feature space (X-values), we did the following feature engineering. (1) For each product, we added a column to hold the number of months since the customer’s first purchase of that product. So in total, 24 columns contained the the purchase history for each customer, up to the given month. (2) The variable "fecha\_alta" was the date in which the customer first acquired a contract with the bank. We replaced it with a variable "memberdays" which holds the difference between this date and the sample date, i.e. "fecha\_dato". (3) We replaced categorical features with sets of binary features: one binary column for each category for a given feature. (4) A certain 27334 rows each had exactly 9 missing values in all the same columns. We eliminated the troublesome rows. About 10\% of the samples were missing $renta$; so we filled the missing values by using averages based on province. (5) Some features were irrelevant for calculation, such as $tipodom$ (address type), and could be discarded easily. Others were used for organizing data but not for calculating regressions: $nomcodpers$ and $fecha\_dato$. $nom\_prov$ was redundant with $cod\_prov$, so we omitted the former.
+For the feature space (X-values), we did following transformation and feature engineering.
+
+We added a column for each product that holds the number of months since the customer’s first purchase of that product. So the 24 newly-added columns contained the information of the purchase history for each customer before the given month.
+
+The variable "fecha\_alta" was the date in which the customer first acquired a contract with the bank. We replaced it with a variable "memberdays" which holds the difference between this date and the sample date, i.e. "fecha\_dato".
+
+As for categorical features, we replaced them with sets of binary features, as normal. For example, if a given categorical feature had three possible values ${A,B,C}$, we replaced that feature with a binary column for $A$, one for $B$, and one for $C$. Unfortunately, two of our categorical variables had over 100 possible values, so our feature space ballooned, threatening the efficacy of our model and motivating regularization later on.
+
+A certain 27334 rows each had exactly 9 missing values in all the same columns. We eliminated the troublesome rows. About 10\% of the samples were missing $renta$; so we filled the missing values by using averages based on province.
+
+Some features were irrelevant for calculation, such as $tipodom$ (address type), and could be discarded easily. Others were used for organizing data but not for calculating regressions: $nomcodpers$ and $fecha\_dato$. $nom\_prov$ was redundant with $cod\_prov$, so we omitted the former.
 
 \subsection{Limiting the Sample}
 
-The data had grown to 39GB in memory. In order to turn out results quickly and avoid the cost of backtracking, we limited the size of the data with which we worked by taking a random sample from the output of our ETL. We experimented with samples of different size and eventually proceeded with a working set of 197968 ($1/2^6$ as many as we produced in ETL). We used a random 10\% of these samples as testing data.
+The data had become quite large, taking 39GB in memory. We were compelled to make use of a cluster owned by the Engineering Department. In order to turn out results quickly and avoid the cost of backtracking, we limited the size of the data with which we worked by taking a random sample from the samples produced by our ETL. We experimented with samples of different size and eventually proceeded with a working set of 197968 ($1/2^6$ as many as we produced in ETL). We used a random 10\% of these samples as testing data.
 
 \subsection{Regression}
 
-We performed a logistic regression on each of the 24 products that a customer might have purchased. We used the sigmoid function $\frac{1}{1+e^{w^Tx}}$. We used an augmented error of $\lambda \times L_2norm$. Due to time constraints, we eschewed the cutomary cross-validation for choice of $\lambda$, instead opting for a $\lambda$ value of 0.1.
+We performed a logistic regression on each of the 24 products that a customer might have purchased. We used the sigmoid function $\frac{1}{1+e^{w^Tx}}$.
 
-For a learning rate, we used an implementation inspired by steepest descent: we began each weight-update with a learning rate of 0.1, which we supposed would be too large in many cases. If the new weights produced an error larger than the previous one, we would try a learning rate half as large, and proceed from there in the fashion of a binary search.
+We performed logistic regression using an augmented error if $\lambda \times L_2norm$ (ridge regression). Naturally, we would use cross-validation to identify the best $\lambda$ for the data, but due to time constraints, we used our sense of the problem to decide on a $\lambda$ value of 0.1. If we were to redo this, we would perform 10-fold cross-validation over a range of possible $\lambda$'s and choose the one that produced the lowest validation error.
+
+We considered a variable learning rate such as Newton's method or a rate that decayed as the iteration count grew. Ultimately, we used an implementation inspired by steepest descent: we began each weight-update with a learning rate of 0.1, which we supposed would be too large in many cases. If the new weights produced an error larger than the previous one, we would try a learning rate half as large, and proceed from there in the fashion of a binary search for some time until we found a minimum error for the current gradient or until we reached some number of iterations.
 
 \subsection{Results}
 
@@ -344,26 +359,64 @@ The mean of these errors is 0.1685.
 
 \subsection{Discussion}
 
-The results of the logistic regressions are suspect. Testing errors range from 0 to 1, inclusive. Scarcity of data for certain products may explain the frequency of errors at these two extremes. In the original dataset, some purchases are so rare that it may be that our reduced dataset contains zero $1$'s for a given product, which would yield a testing error of zero.
+The results of the logistic regressions are unfortunately suspect. A quick examination shows that the gamut of possible errors is crossed completely: testing errors range from 0 to 1, inclusive. More than likely, the frequency of errors at these two extremes may be explained by the scarcity of purchase data for some products. Even considering all of the Santander data that were supplied, some purchases are so rare that it is entirely conceivable that our random sample contains zero, one, or only a handful of 1's in the corresponding label column. In the event that no 1's are to be found for a given product, it is no wonder that our testing error would be 0; no other error is possible.
 
-Although limiting the dataset to $1/2^6$ of its original size may hurt generalization, we still have almost 200K samples to work with and only 419 features, well past the ten-times-the-VC-dimension rule of thumb.\cite{amlbook}
+Our limitation of the dataset to $1/2^6$ of its original size certainly introduces room for error, but even so, we have almost 200K samples to work with and only 419 features. This is well past the ten-times-the-VC-dimension rule of thumb.\cite{amlbook}
 
-In future, we might perform further feature reduction. On a typical example from our 24 regressions, 251 non-zero weights remained. Nevertheless, only 19 weights measured greater than 0.00001.
+Perhaps a greater amount of feature reduction should have been performed. On a typical example from our 24 regressions, 251 non-zero weights remained. However, only 19 weights measured greater than 0.00001. We intended to perform PCA in order to combat the explosion of features that the bugaboo categorical features imposed: $pais\_residencia$, $canal\_entrada$, and $cod\_prov$ each gave rise to a great many binary features, thereby heightening risk of disproportionately weighting the original categorical columns.
 
 Our decisions for how to fill in missing values also likely contribute to some inaccuracy in our model.
 
-\subsection{Author Contributions}
+\subsection{Author contributions}
 \begin{itemize}
-	\item Bowen He: data analysis & interpretation; coded purchase-history vars; feature engineering; combined & revised report 'Discussion'
+	\item Bowen He:  Worked on data analysis and interpretation, wrote the code to create purchase history variables, worked on feature engineering, combined and revised the discussion part for all groups.
 
-	\item Yuan Tian: data analysis & interpretation; coded data cleaning; planned ETL, revised report
+	\item Yuan Tian:  Worked on data analysis and interpretation, created the data cleaning code, generated the idea of ETL process, i.e. defining labels and feature space, and revised the report.
 
-	\item Miao Wang: data analysis & interpretation; coded response vars; feature engineering; revised report
+	\item Miao Wang:  Worked on data analysis and interpretation, wrote the code to create response variables, worked on feature engineering, and revised the report.
 
-	\item Markham Anderson: wrote subgroup report; data processing; coded regression model, performed classification
+	\item Markham Anderson: Wrote the subgroup report, worked on data processing, created the Logistic regression model, wrote code to get the classifier and evaluated its performance.
 \end{itemize}
 
 \newpage
+
+\begin{appendices}
+
+	\section{Random Forest Data Processing}
+	\label{appendix:rn_data}
+	\begin{longtable}{p{3cm}|p{5cm}|p{5cm}}
+		Column Name & Description & How To Flatten  \\
+		\hline
+		fecha\_dato & The table is partitioned for this column & Remove in flattening \\
+		ncodpers & Customer code & Keep as key in flattening \\
+		ind\_empleado & Employee index: A active, B ex employed, F filial, N not employee, P pasive & Drop, since there are 13,576,218 NAs which is a huge proportion in the whole data set \\
+		pais\_residencia & Customer's Country residence & Use mode to fill NAs and flattening\\
+		sexo & Customer's sex & Use mode to clean the data and flattening\\
+		age & Age & Use max/final age for each customer. Outliers were moved to the median according to different age range \\
+		fecha\_alta & The date in which the customer became as the first holder of a contract in the bank & Shouldn't change \\
+		ind\_nuevo & New customer Index. 1 if the customer registered in the last 6 months. & Drop, since we have fecha\_alta \\
+		antiguedad & Customer seniority (in months) & Drop, since we have fecha\_alta \\
+		indrel & 1 (First/Primary), 99 (Primary customer during the month but not at the end of the month) & Drop, since we have indrel\_1mes \\
+		ult\_fec\_cli\_1t & Last date as primary customer (if he isn't at the end of the month) & Drop, since we have indrel\_1mes \\
+		indrel\_1mes & Customer type at the beginning of the month ,1 (First/Primary customer), 2 (co-owner ),P (Potential),3 (former primary), 4(former co-owner) & Use mode \\
+		tiprel\_1mes & Customer relation type at the beginning of the month, A (active), I (inactive), P (former customer),R (Potential) & Drop, since we have indrel\_1mes, activity index \\
+		indresi & Residence index (S (Yes) or N (No) if the residence country is the same than the bank country) & Drop, since we have pais\_residencia \\
+		indext & Foreigner index (S (Yes) or N (No) if the customer's birth country is different than the bank country) & Drop, since we have pais\_residencia \\
+		conyuemp & Spouse index. 1 if the customer is spouse of an employee & Drop, since too many NA \\
+		canal\_entrada & channel used by the customer to join & Drop, since too many NA \\
+		indfall & Deceased index. N/S & Drop, since we are dropping deceased custos \\
+		tipodom & Addres type. 1, primary address & Drop, we assume it won't matter \\
+		cod\_prov & Province code (customer's address) & Use mode \\
+		nomprov & Province name & Drop, since we have cod\_prov \\
+		ind\_actividad\_cliente & Activity index (1, active customer; 0, inactive customer) & Length of most recent inactive period \& how long ago that period was \\
+		renta & Gross income of the household & Use mean, fill NAs by median household income of different province \\
+		segmento & segmentation: 01 - VIP, 02 - Individuals 03 - college graduated & Use mode \& last \\
+		ind\_ahor\_fin\_ult1 & Saving Account & Timing: Months from fecha\_alta until first fecha\_dato in which product is purchased \& Length: Use sum \\
+
+
+	\end{longtable}
+
+\end{appendices}
 
 \begin{thebibliography}{9}
 
