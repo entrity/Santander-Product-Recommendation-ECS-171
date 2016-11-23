@@ -45,7 +45,7 @@
 \end{abstract}
 
 \section{Introduction}
-The project is aimed at building a more effective recommendation system. Through this system, Santander can predict which products their existing customers will buy in the next month based on their past behavior and that of similar customers. One of the difficulties is how to deal with the large data set. Indeed, the original data set contains 13 million records from January 2015 to June 2016, with approximate 930 thousand customers. How to deal with the large data set and transform the data to the model are the core problems of this project.
+\noindent \indent The project is aimed at building a more effective recommendation system. Through this system, Santander can predict which products their existing customers will buy in the next month based on their past behavior and that of similar customers. One of the difficulties is how to deal with the large data set. Indeed, the original data set contains 13 million records from January 2015 to June 2016, with approximate 930 thousand customers. How to deal with the large data set and transform the data to the model are the core problems of this project.
 
 In our project, we applied four methods to solve this prediction problem: logistic regression, random forest, SVM and xgboost. For each method, the ways to clean and process the data are different but there are still some similarity.
 
@@ -53,19 +53,13 @@ This paper introduces four machine learning methods. In each sub parts, we will 
 
 \section{XGBoost}
 
-\subsection{Methods}
-
-\noindent \indent XGBoost is short for ``Extreme Gradient Boosting" and is widely used in machine learning problems, especially classification problems\cite{xg1}\cite{xg2}. 
-
 \subsection{Data Pre-processing}
 
 \noindent \indent Since there are many missing values and outliers, the first thing is to clean data. 27334 records with 9 consecutive NA values are deleted and the extreme values (for an instance, the 99 percent quantile of the age variable is 88 years old) are excluded. After exploring the original data, we decide to use 32 features to predict the response. For the \verb|"age"|, \verb|"antiguedad"| and \verb|"renta"|, we cut them into 5 intervals and they also become categorical features now. 
-
 The response is the additional product which the customer would add in the next month. If the customer adds more than one product, we only randomly pick one of them. To make the data size smaller and the problem easier, we subset the samples with nonzero response, which means we only consider the records with additional product.
 
 \subsection{XGBoost Algorithm}
-
-\noindent \indent To find the best parameters given the training data, we need to define a so-called objective function. Here for XGBoost algorithm, the objective function contains two parts: training loss and regularization.
+\noindent \indent XGBoost is short for ``Extreme Gradient Boosting" and is widely used in machine learning problems, especially classification problems\cite{xg1}\cite{xg2}. To find the best parameters given the training data, we need to define a objective function,which contains two parts: training loss and regularization.
 \[
 Obj(\Theta) = L(\theta) + \Omega(\theta)
 \]
@@ -284,7 +278,7 @@ ROC and PRC curve for "ind\_cco\_fin\_ult1" , "ind\_fond\_fin\_ult1" and "ind\_d
 \end{tabular}
 \vspace{5mm}
 
-\includegraphics[scale = 0.8]{ROCwithandwithoutweights.png}
+\includegraphics[scale = 0.5]{ROCwithandwithoutweights.png}
 
 \subsection{Author contributions}
 \begin{enumerate}
