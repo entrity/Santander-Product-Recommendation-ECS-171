@@ -59,7 +59,7 @@ This paper introduces four machine learning methods. In each sub parts, we will 
 
 \subsection{Data Pre-processing}
 
-\noindent \indent Since there are many missing values and outliers, the first thing is to delete 27334 records with 9 consecutive NA values and extreme values (for an instance, the 99 percent quantile of the age variable is 88 years old). Then, we decide to only use 32 features to predict the response. For the \verb|"age"|, \verb|"antiguedad"| and \verb|"renta"|, we cut them into 5 intervals and they also become categorical features now. 
+\noindent \indent Since there are many missing values and outliers, the first thing is to delete 27334 records with 9 consecutive NA values and extreme values (for an instance, the 99 percent quantile of the age variable is 88 years old). Then, we decide to only use 32 features to predict the response. For the \verb|"age"|, \verb|"antiguedad"| and \verb|"renta"|, we cut them into 5 intervals and they also become categorical features now.
 
 The response is the additional product which the customer would add in the next month. If the customer adds more than one product, we only randomly pick one of them. To make the data size smaller and the problem easier, we subset the samples with nonzero response, which means we only consider the records with additional product.
 
@@ -71,7 +71,7 @@ Obj(\Theta) = L(\theta) + \Omega(\theta)
 \]
 where $L$ is the training loss function, and $\Omega$ is the regularization term. The training loss measures how predictive our model is on training data. The regularization term controls the complexity of the model, which helps avoiding overfitting. We define these two items as:
 \[
-L(\theta) = \sum_{i}(y_i - \hat{y_i})^2 \ \ \ \ \ \  
+L(\theta) = \sum_{i}(y_i - \hat{y_i})^2 \ \ \ \ \ \
 \Omega(f) = \gamma T + \frac{1}{2}\lambda\sum_{j = 1}^{T}(w_j)^2
 \]
 
@@ -131,14 +131,14 @@ Due to the vague description of the problem, we are not sure how many new produc
 
 Random forests do not handle time series very well. Had we not transformed the data we would have had to worry about how the training and testing subsets were selected to ensure that future data is not used to predict past data. In addition, a decision tree cannot split on a non repeating independent variable such as time to produce any useful results. So we would have had to generate features to capture the time trend.
 
-In general we filled NA values with the mode of the value across all customers if it was categorical. We moved the outliers for age to the median of the age category (above or below 30). 
-For testing, we flattened the time-series data such that each customer only had 1 row. We generally used aggregates of the users' columns, such as the mode for that user over time. 
+In general we filled NA values with the mode of the value across all customers if it was categorical. We moved the outliers for age to the median of the age category (above or below 30).
+For testing, we flattened the time-series data such that each customer only had 1 row. We generally used aggregates of the users' columns, such as the mode for that user over time.
 Since Kaggle does not provide true classes in 2016-6, our testing set uses product classes from 2016-5 as true predictor variables for each customer.
 
 \subsection{Method}
 
 \paragraph{Random Forest}
-We use a random forest model with 100 trees. A RF model uses decision trees as weak predictors of the response variable to produce a strong predictor in the random forest. Each tree is produced on a random subset of samples with replacement and would otherwise suffer from over fitting and high variance. At each split a random subset of features without replacement is used to find the best split. Each tree produces a classification and the mode of the classifications becomes the forest's overall classification for the sample. However for our model, sklearn instead averages the probability of predicting a class across all trees.\cite{rnSKlearn}  The out of bag samples for each tree is used to test the tree and provide an unbiased estimator of the classification error.\cite{rnLeo} 
+We use a random forest model with 100 trees. A RF model uses decision trees as weak predictors of the response variable to produce a strong predictor in the random forest. Each tree is produced on a random subset of samples with replacement and would otherwise suffer from over fitting and high variance. At each split a random subset of features without replacement is used to find the best split. Each tree produces a classification and the mode of the classifications becomes the forest's overall classification for the sample. However for our model, sklearn instead averages the probability of predicting a class across all trees.\cite{rnSKlearn}  The out of bag samples for each tree is used to test the tree and provide an unbiased estimator of the classification error.\cite{rnLeo}
 
 \paragraph{Choosing the Random Forest}
 
@@ -313,6 +313,9 @@ Our decisions for how to fill in missing values also likely contribute to some i
 
 \section{Author Contributions}
 
+
+\begin{multicols}{2}
+
 \textbf{XGBoost} \\
 Xinyi Hou: Lead the project as a whole, pre-processed data, tune parameter and wrote final abstract. \\
 Yingxi Yu:  Wrote the model code,tune parameter and made the powerpoint. \\
@@ -334,7 +337,7 @@ Yuan Tian:  Data analysis and interpretation, data cleaning code, generated the 
 Miao Wang:  Data analysis and interpretation, code to create response variables, feature engineering, and revised the report. \\
 Markham Anderson: Wrote the subgroup report, data processing, created Logistic regression model, wrote classifier code and evaluated its performance. \\
 
-
+\end{multicols}
 
 \begin{thebibliography}{9}
 
