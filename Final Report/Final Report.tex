@@ -52,7 +52,7 @@
 
 \subsection{Data Pre-processing}
 
-\noindent \indent Since there are many missing values and outliers, the first thing is to clean data. 27334 records with 9 consecutive NA values are deleted and the extreme values (for an instance, the 99 percent quantile of the age variable is 88 years old) are excluded. After exploring the original data, we decide to use 32 features to predict the response. The 32 features include \verb|"pais_residencia"|, \verb|"age"|, \verb|"ind_nuevo"|, \verb|"antiguedad"|, \verb|"ind_empleado"|, \verb|"renta"|, \verb|"ind_actividad_cliente"|, \verb|"segmento"| and 24 product status. For the \verb|"age"|, \verb|"antiguedad"| and \verb|"renta"|, we cut them into 5 intervals and they also become categorical features now. 
+\noindent \indent Since there are many missing values and outliers, the first thing is to clean data. 27334 records with 9 consecutive NA values are deleted and the extreme values (for an instance, the 99 percent quantile of the age variable is 88 years old) are excluded. After exploring the original data, we decide to use 32 features to predict the response. The 32 features include \verb|"pais_residencia"|, \verb|"age"|, \verb|"ind_nuevo"|, \verb|"antiguedad"|, \verb|"ind_empleado"|, \verb|"renta"|, \verb|"ind_actividad_cliente"|, \verb|"segmento"| and 24 product status. For the \verb|"age"|, \verb|"antiguedad"| and \verb|"renta"|, we cut them into 5 intervals and they also become categorical features now.
 
 The response is the additional product which the customer would add in the next month. If the customer adds more than one product, we only randomly pick one of them. To make the data size smaller and the problem easier, we subset the samples with nonzero response, which means we only consider the records with additional product.
 
@@ -73,7 +73,7 @@ L(\theta) = \sum_{i}(y_i - \hat{y_i})^2
 
 
 
-\subsection{Results} 
+\subsection{Results}
 
 \noindent \indent Different from some other groups, we only apply the algorithm once and fit a multi-classifier model. We randomly pick 70\% of the data to be the training data, and the rest 30\% to be the test set. By changing the main parameters \cite{xg3} max.depth among 5, 6, 7, the number of trees among 10, 50, 100, and the step size among 0.1, 0.5, 1, we get the results displayed in the tables as below.
 \begin{table}[h]
@@ -150,7 +150,7 @@ Since the Kaggle provided test data does not include the true classifications, w
 \subsection{Method}
 
 \paragraph{Random Forest}
-We use a random forest model with 100 trees. A RF model uses decision trees as weak predictors of the response variable to produce a strong predictor in the random forest. Each tree is produced on a random subset of samples with replacement and would otherwise suffer from over fitting and high variance. At each split a random subset of features without replacement is used to find the best split. Each tree produces a classification and the mode of the classifications becomes the forest's overall classification for the sample. However for our model, sklearn instead averages the probability of predicting a class across all trees.\cite{rnSKlearn}  The out of bag samples for each tree is used to test the tree and provide an unbiased estimator of the classification error.\cite{rnLeo} 
+We use a random forest model with 100 trees. A RF model uses decision trees as weak predictors of the response variable to produce a strong predictor in the random forest. Each tree is produced on a random subset of samples with replacement and would otherwise suffer from over fitting and high variance. At each split a random subset of features without replacement is used to find the best split. Each tree produces a classification and the mode of the classifications becomes the forest's overall classification for the sample. However for our model, sklearn instead averages the probability of predicting a class across all trees.\cite{rnSKlearn}  The out of bag samples for each tree is used to test the tree and provide an unbiased estimator of the classification error.\cite{rnLeo}
 
 \paragraph{The Decision Tree}
 Each split is made with respect to a random subset of features. The optimal split is chosen to minimize the impurity of the node being split on. The Gini impurity function is a common function to use. In all cases the goal is to split such that samples are grouped together by label.
@@ -167,14 +167,14 @@ We tested the forest with varying number of trees and maximum depth. As expected
 \begin{table}[h]
 	\centering
 	\begin{tabular}{|c|c|c|c|}
-		\hline 
-		\backslashbox{Trees}{Depth} & 10 & 100 & $\infty$ \\ 
-		\hline 
-		1 & 0.7434 & 0.8594  & 0.8594 \\ 
-		10 & 0.8465 & 0.8956  & 0.8956 \\ 
-		100 & 0.8518 & 0.9044  & 0.8921 \\ 
-		\hline 
-	\end{tabular} 
+		\hline
+		\backslashbox{Trees}{Depth} & 10 & 100 & $\infty$ \\
+		\hline
+		1 & 0.7434 & 0.8594  & 0.8594 \\
+		10 & 0.8465 & 0.8956  & 0.8956 \\
+		100 & 0.8518 & 0.9044  & 0.8921 \\
+		\hline
+	\end{tabular}
 	\caption{Model Accuracy vs \# of Trees and Tree Depth}
 	\label{tab:my_label}
 \end{table}
@@ -213,35 +213,31 @@ Run the jupyter project RanForestForFlat.ipynb \\
 	In order to increase the accuracy of model and efficiency of calculation, remove should remove some independent variables:
 	
 	\begin{itemize}
-		\item Since we should transform categorical variables into dummy variables, variables(canal\_ entrada) with too many levels would sharply increase the model complexity and decrease the effectiveness of calculation.
+		\item  We delete variables with too many levels for they are hard to be transformed into dummy variables.
 		
-		\item We also leave out independent variables that have repeated information. For example, indresi(whether residence country is the same as the bank country) and nomprov(i.e Province name) reflect the similar information of the customer so we could only keep one of them. 
+		\item We leave out independent variables that have repeated information.
 		
-		\item For the independent variables predominated by missing values,such as conyuemp, we leave them out because they could not reflect useful information. 
+		\item We will not include  variables predominated by missing values.
 	\end{itemize}
 	
-	According to these three  rules, we remove : pais\_residencia, fecha\_alta, indext, conyuemp, canal\_entrada, tipodom, cod\_prov and nomprov. 
+	According to these three  rules, we remove : pais\_residencia, fecha\_alta, indext, conyuemp, canal\_entrada, tipodom, cod\_prov and nomprov.
 	
 	\item  Missing values
 	
-	For the cases have missing values in any of the 24 dependent variables, we remove them for the reason that these missing values only proportion less than 1\% and did not show no obvious pattern. 
-	
-	As for independent variables, we only find missing values in renta(gross income), we use the regional average to replace the missing values. 
+	For the cases have missing values in any of the 24 dependent variables, we remove them for the reason that these missing values only proportion less than 1\% and did not show no obvious pattern. As for independent variables, we only find missing values in renta(gross income), we use the regional average to replace the missing values.
 	
 	\item Data Transformation
 	
-	For independent variables, we transform the categorical variables into dummy variable. For the variable with n levels, we create (n-1) dummy variables. Besides, aimed to avoid influence of units and scales, we standardize the continuous variables. 
+	For independent variables, we transform the categorical variables into dummy variable. Besides, aimed to avoid influence of units and scales, we standardize the continuous variables. Then we process the response variables. We use  value of the next month minus that of  current month as response variables. If the result is “1”, we could figure out the customer bought certain new product i. Otherwise The consumer did not buy new products.
 	
-	Then we process the response variables.  Owing that our goal is to predict what additional products a customer will get in addition to what they already have at the last month. So the value of the next month minus that of the current month.  If the result is “1”, we could figure out the customer bought certain new product i. Otherwise The consumer did not buy new products. 
-	
-	Thus, we could build model to predict additional products consumers would buy for next month given their personal characteristics and their consumption records at current month.
+	Thus, we could predict additional products consumers would buy for next month given their personal characteristics and consumption records at current month.
 \end{enumerate}
 
 \subsection{SVM Model}
 
-Support vector machine (i.e SVM) is the supervised learning model that analyze the data used for classification. With associated learning algorithms, a line or a hyper-plane is found to classify the data. In addition to doing linear classification, SVM can also efficiently perform a non-linear classification using kernel, making the separating hyper-plane complicated and do the classification better.
+SVM is the supervised learning model for classification. With associated learning algorithms, a line or a hyper-plane is found to classify the data.
 
-In our case, we want the classifier to be less sensitive to outliers to keep the margin sufficiently large. To do so, we introduce “slack variables” that allow samples to be misclassified or be within the margin. Additionally, to make the samples more separable, we introduce the idea of kernel. Consequently, we have :
+In our case, we want classifier to be less sensitive to outliers to keep the margin sufficiently large. To do so, we introduce “slack variables” that allow samples to be misclassified.Besides, we introduce the idea of kernel. Consequently, we have :
 
 Decision function:
 $$f(x) = \displaystyle\sum_{i}\alpha_i\Phi(x_i)\Phi(x)+b = \displaystyle\sum_{i}\alpha_{i} K(x_i, x)+b$$, where $K(x_i, x)$ is the Kernel function.
@@ -251,23 +247,15 @@ $$min P(w,b) = \frac{1}{2}(||\displaystyle\sum_{i=1}^{m}\alpha_i\Phi(x_i)||)^2 +
 
 \subsection{Results}
 
-Based on the result of SVM and real labels of the 24 dependent variables, we calculate accuracy for each estimation. Namely:
-$$Accuracy = \frac{TP+TN}{P+N}$$
-Where TP is count of true positive , TN is count of true negative , N is count of negative and P is count of positive.
-
-We found that, for each of the 24 estimation, the accuracy is higher than 99\% which indicates a high performance of the model in predicting each single dependent variable.
+Initially, we use accuracy to estimate the results. For each of the 24 estimations, the accuracy is higher than 99\% which indicates a high performance of the model.
 
 The we calculate the overall accuracy:
 $$Overall\enspace Accuracy = \frac{Counts\enspace of\enspace the\enspace cases\enspace which\enspace all\enspace the\enspace 24\enspace variables\enspace are\enspace predicted\enspace correctly}{total\enspace number\enspace of\enspace cases}$$
-In this case, the overall accuracy rate is 98\% which shows SVM method accuate result.
+In this case, the overall accuracy rate is 98\% which shows SVM method accurate result.
 
 \subsection{Discussion}
 
-However, scuritiny of the data reveals simply focusing on the accuracy is not reasonable. Precisely, for most dependent variables, the negative class 0 is predominant (typically greater than 99\%). Thus, even though all the predictions are zeros, the accuracy would be still easily over 99\%, based on which, the high performance might be caused by the fact that wrong prediction in 1s does not have much influence on the accuracy. To examine this idea, we choose 3 different dependent variables, each of which has very asymmetric distribution in 0s and 1s, and then use ROC and PRC to exhibit the results:
-
-$$True\enspace Positive\enspace Rate = Recall = \frac{TP}{TP+FN}, Precision = \frac{TP}{TP+FP}$$
-
-In the following plots, we can observe when the negative class 0 is highly predominant, the ROC and PRC suggest our results are actually problematic despite the fact that the accuracys are pretty good. Below is the confusion matrix for response variable "ind\_cco\_fin\_ult1".
+However, scrutiny of the data reveals simply focusing on the accuracy is not reasonable. Precisely, for most dependent variables, the negative class 0 is predominant. Thus, even though all the predictions are zeros, the accuracy would be still easily over 99\%, based on which, the high performance might be caused by the fact that wrong prediction in 1s does not have much influence on the accuracy. To examine this idea, we choose 3 dependent variables with asymmetric distribution in 0s and 1s, and then use ROC and PRC to exhibit the results:
 
 \vspace{5mm}
 \begin{tabular}{| l | l | l |}
@@ -279,15 +267,15 @@ In the following plots, we can observe when the negative class 0 is highly predo
 \end{tabular}
 \vspace{5mm}
 
-The accuracy here is really high only, which is 99.44\%. However the model is completely useless since we are very interested in helping the bank to recommend products to a potential customer in addition to what he/she already has. Thus, it is very important to correctly classify 1 as 1. Failing to consider other metrics of evaluation like precision and recall would lead to an unjustified model. Here the recall is 0 and the precision is NA because there is not a single observation being classified as 1. The reason for this is that the negative class 0 is predominant in "ind\_cco\_fin\_ult1" and the model tends to classify everything as 0, producing that all the 1’s are classified as 0. The results are even worse for the other two variables as the class 1 are fewer.
+From the table, we can see that though accuracy here is really high, the model is  useless since we are  interested in helping the bank to recommend products to a potential customer. Thus, it is very important to correctly classify 1 as 1. Failing to consider other metrics of evaluation like precision and recall would lead to an unjustified model. Here the recall is 0 and the precision is NA because there is not a single observation being classified as 1. The reason for this is that the negative class 0 is predominant in "ind\_cco\_fin\_ult1" and the model tends to classify everything as 0, producing that all the 1’s are classified as 0. The results are even worse for the other two variables as the class 1 are fewer.
 
-ROC and PRC curve for "ind\_cco\_fin\_ult1" , "ind\_fond\_fin\_ult1" and "ind\_deme\_fin\_ult1" 
+ROC and PRC curve for "ind\_cco\_fin\_ult1" , "ind\_fond\_fin\_ult1" and "ind\_deme\_fin\_ult1"
 
 \vspace{5mm}
 \includegraphics[scale = 0.8]{ROCandPR.png}
 \vspace{5mm}
 
-We come up with two solutions to deal with this skewed class problem. One is to replace random sampling for training set and testing data by stratified sampling, which assures that the training set and testing data are well balanced. Random sampling seems to be reasonable but in our case, class 1 is really scarce. Therefore it is likely that all those class 1 being sampled into testing set, which makes it impossible for our algorithm to learn the hidden pattern of class 1. The other workaround is to add higher weights to the minority class which would encourage the model to be gear towards classifying 1 as 1 and add some penalty for model to predict 0. We tried the second option by adding weights to the two classes which are inverse proportional to their fractions. The results are as follows. It is shown that all class 1’s are correctly classified! Now the precision and recall are 1.64\% and 100\%. But there is some inevitable trade offs as in general one of these two metric gets better, the other will get worse. Additionally, since we add more penalty when the model predicts 0, there are plenty of class 0 being misclassified which leads to accuracy decreasing to 66.51 as well as decreasing in specifity. However, in our case, recall should be the first priority as we do not want to lose any potential customers, we should accept this trade off. It is also worth noting that another downside is that the process for training model is more time consuming than before.
+ To solve this problem, we add higher weights to the minority class which would encourage the model to be gear towards classifying 1 as 1 and add some penalty for model to predict 0. The results are as follows. It is shown that all class 1’s are correctly classified! Now the precision and recall are 1.64\% and 100\%. But there is some inevitable trade offs as in general one of these two metric gets better, the other will get worse. Additionally, since we add more penalty when the model predicts 0, there are plenty of class 0 being misclassified which leads to accuracy decreasing to 66.51 as well as decreasing in specifity. However, in our case, recall should be the first priority as we do not want to lose any potential customers, we should accept this trade off. It is also worth noting that another downside is that the process for training model is more time consuming than before.
 
 \vspace{5mm}
 \begin{tabular}{| l | l | l |}
@@ -330,7 +318,7 @@ Our labels (Y-values) were 24 binary fields corresponding to the Santander produ
 
 For the feature space (X-values), we did following transformation and feature engineering.
 
-Since the previous purchases for each customer in a given month were also useful features to predict his/her purchasing behevior, we added a column for each product that holds the number of months since the customer’s first purchase of that product. So the 24 newly-added columns contained the information of the purchase history for each customer before the given month. 
+Since the previous purchases for each customer in a given month were also useful features to predict his/her purchasing behevior, we added a column for each product that holds the number of months since the customer’s first purchase of that product. So the 24 newly-added columns contained the information of the purchase history for each customer before the given month.
 
 The variable "fecha\_alta" was the date in which the customer became as the first holder of a contract in the bank. We transformed it into a numeric variable named "memberdays" which was the difference between this date and the given date, i.e., "fecha\_dato". "Memberdays" kept records of how many days the customer had become a Santander member.
 
@@ -382,9 +370,9 @@ For the 24 products (i.e. regressions), we calculated the following mean-squared
 		& 0.006567            & 0.002576   & 0.001667   & 0.001061   & 0.005203   & 0.005607            & 0.006921   \\ \hline
 		0.01 \textless MSE \textless 1     & ctju\_fin:          & ctpp\_fin: & recibo:    &            &            &                     &            \\
 		& 0.999949            & 0.999899   & 0.011517   &            &            &                     &            \\ \hline
-		MSE = 1                            & aval\_fin:          & pres\_fin: &            &            &            &                     &\\            
-		&                    & 1          &1           &            &            &                     & \\ 
-		\hline         
+		MSE = 1                            & aval\_fin:          & pres\_fin: &            &            &            &                     &\\
+		&                    & 1          &1           &            &            &                     & \\
+		\hline
 	\end{tabular}
 \end{table}
 The mean of these errors is 0.1685.
@@ -393,7 +381,7 @@ The mean of these errors is 0.1685.
 
 The results of the logistic regressions are unfortunately suspect. A quick examination shows that the gamut of possible errors is crossed completely: testing errors range from 0 to 1, inclusive. More than likely, the frequency of errors at these two extremes may be explained by the scarcity of purchase data for some products. Even considering all of the Santander data that were supplied, some purchases are so rare that it is entirely conceivable that our random sample contains zero, one, or only a handful of 1's in the corresponding label column. In the event that no 1's are to be found for a given product, it is no wonder that our testing error would be 0; no other error is possible.
 
-Our limitation of the dataset to $1/2^6$ of its original size certainly introduces room for error, but even so, we have almost 200K samples to work with and only 419 features. This is well past the ten-times-the-VC-dimension rule of thumb.\cite{amlbook} 
+Our limitation of the dataset to $1/2^6$ of its original size certainly introduces room for error, but even so, we have almost 200K samples to work with and only 419 features. This is well past the ten-times-the-VC-dimension rule of thumb.\cite{amlbook}
 
 Perhaps a greater amount of feature reduction should have been performed. On a typical example from our 24 regressions, 251 non-zero weights remained. However, only 19 weights measured greater than 0.00001. We intended to perform PCA in order to combat the explosion of features that the bugaboo categorical features imposed: $pais\_residencia$, $canal\_entrada$, and $cod\_prov$ each gave rise to a great many binary features, thereby heightening risk of disproportionately weighting the original categorical columns.
 
@@ -464,14 +452,14 @@ Our decisions for how to fill in missing values also likely contribute to some i
 	\emph{XGBoost Parameters}.
 	http://xgboost.readthedocs.io/en/latest//parameter.html
 	
-	\bibitem{rnLeo} 
-	Breiman, Leo and Cutler, Adele 
-	\textit{Random Forest}. 
+	\bibitem{rnLeo}
+	Breiman, Leo and Cutler, Adele
+	\textit{Random Forest}.
 	\\\texttt{https://www.stat.berkeley.edu/~breiman/RandomForests/cc\_home.htm}
 	
-	\bibitem{rnSKlearn} 
+	\bibitem{rnSKlearn}
 	Scikit Learn,
-	\textit{Ensemble Methods}. 
+	\textit{Ensemble Methods}.
 	\\\texttt{http://scikit-learn.org/stable/modules/ensemble.html}
 	
 	\bibitem{book1}
@@ -489,7 +477,7 @@ Our decisions for how to fill in missing values also likely contribute to some i
 	herkassky, Vladimir, and Yunqian Ma, \textit{Practical selection of SVM parameters and noise estimation for SVM regression}. Neural networks 17.1 (2004): 113-126.
 	
 	\bibitem{paper2}
-	Yehuda Koren, Robert Bell, and  Chris Volinsky, 
+	Yehuda Koren, Robert Bell, and  Chris Volinsky,
 	\textit{Matrix Factorization Techniques for Recommender Systems}. IEEE Computer Society, 2009.
 \end{thebibliography}
 
