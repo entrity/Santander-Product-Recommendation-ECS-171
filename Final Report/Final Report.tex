@@ -55,11 +55,11 @@ This paper introduces four machine learning methods. In each sub parts, we will 
 
 \subsection{Methods}
 
-\noindent \indent XGBoost is short for ``Extreme Gradient Boosting" and is widely used in machine learning problems, especially classification problems\cite{xg1}\cite{xg2}. 
+\noindent \indent XGBoost is short for ``Extreme Gradient Boosting" and is widely used in machine learning problems, especially classification problems\cite{xg1}\cite{xg2}.
 
 \subsection{Data Pre-processing}
 
-\noindent \indent Since there are many missing values and outliers, the first thing is to clean data. 27334 records with 9 consecutive NA values are deleted and the extreme values (for an instance, the 99 percent quantile of the age variable is 88 years old) are excluded. After exploring the original data, we decide to use 32 features to predict the response. For the \verb|"age"|, \verb|"antiguedad"| and \verb|"renta"|, we cut them into 5 intervals and they also become categorical features now. 
+\noindent \indent Since there are many missing values and outliers, the first thing is to clean data. 27334 records with 9 consecutive NA values are deleted and the extreme values (for an instance, the 99 percent quantile of the age variable is 88 years old) are excluded. After exploring the original data, we decide to use 32 features to predict the response. For the \verb|"age"|, \verb|"antiguedad"| and \verb|"renta"|, we cut them into 5 intervals and they also become categorical features now.
 
 The response is the additional product which the customer would add in the next month. If the customer adds more than one product, we only randomly pick one of them. To make the data size smaller and the problem easier, we subset the samples with nonzero response, which means we only consider the records with additional product.
 
@@ -221,11 +221,11 @@ Run the jupyter project RanForestForFlat.ipynb \\
 
 	\item  Missing values
 
-	For the cases have missing values in any of the 24 dependent variables, we remove them for the reason that these missing values only proportion less than 1\% and did not show no obvious pattern. 
+	For the cases have missing values in any of the 24 dependent variables, we remove them for the reason that these missing values only proportion less than 1\% and did not show no obvious pattern.
 
 	\item Data Transformation
 
-	For independent variables, we transform the categorical variables into dummy variable. For the variable with n levels, we create (n-1) dummy variables. Besides, aimed to avoid influence of units and scales, we standardize the continuous variables. 
+	For independent variables, we transform the categorical variables into dummy variable. For the variable with n levels, we create (n-1) dummy variables. Besides, aimed to avoid influence of units and scales, we standardize the continuous variables.
 
 	Thus, we could predict additional products consumers would buy for next month given their personal characteristics and consumption records at current month.
 \end{enumerate}
@@ -317,7 +317,7 @@ We added a column for each product that holds the number of months since the cus
 
 The variable "fecha\_alta" was the date in which the customer first acquired a contract with the bank. We replaced it with a variable "memberdays" which holds the difference between this date and the sample date, i.e. "fecha\_dato".
 
-As for categorical features, we replaced them with sets of binary features, as normal. For example, if a given categorical feature had three possible values ${A,B,C}$, we replaced that feature with a binary column for $A$, one for $B$, and one for $C$. Unfortunately, two of our categorical variables had over 100 possible values, so our feature space ballooned, threatening the efficacy of our model and motivating regularization later on.
+We replaced categorical features with sets of binary features: one binary column for each category for a given feature.
 
 A certain 27334 rows each had exactly 9 missing values in all the same columns. We eliminated the troublesome rows. About 10\% of the samples were missing $renta$; so we filled the missing values by using averages based on province.
 
@@ -329,11 +329,9 @@ The data had become quite large, taking 39GB in memory. We were compelled to mak
 
 \subsection{Regression}
 
-We performed a logistic regression on each of the 24 products that a customer might have purchased. We used the sigmoid function $\frac{1}{1+e^{w^Tx}}$.
+We performed a logistic regression on each of the 24 products that a customer might have purchased. We used the sigmoid function $\frac{1}{1+e^{w^Tx}}$. We used an augmented error of $\lambda \times L_2norm$. Due to time constraints, we eschewed the cutomary cross-validation for choice of $\lambda$, instead opting for a $\lambda$ value of 0.1.
 
-We performed logistic regression using an augmented error if $\lambda \times L_2norm$ (ridge regression). Naturally, we would use cross-validation to identify the best $\lambda$ for the data, but due to time constraints, we used our sense of the problem to decide on a $\lambda$ value of 0.1. If we were to redo this, we would perform 10-fold cross-validation over a range of possible $\lambda$'s and choose the one that produced the lowest validation error.
-
-We considered a variable learning rate such as Newton's method or a rate that decayed as the iteration count grew. Ultimately, we used an implementation inspired by steepest descent: we began each weight-update with a learning rate of 0.1, which we supposed would be too large in many cases. If the new weights produced an error larger than the previous one, we would try a learning rate half as large, and proceed from there in the fashion of a binary search for some time until we found a minimum error for the current gradient or until we reached some number of iterations.
+For a learning rate, we used an implementation inspired by steepest descent: we began each weight-update with a learning rate of 0.1, which we supposed would be too large in many cases. If the new weights produced an error larger than the previous one, we would try a learning rate half as large, and proceed from there in the fashion of a binary search.
 
 \subsection{Results}
 
@@ -362,11 +360,11 @@ The mean of these errors is 0.1685.
 
 \subsection{Discussion}
 
-The results of the logistic regressions are unfortunately suspect. A quick examination shows that the gamut of possible errors is crossed completely: testing errors range from 0 to 1, inclusive. More than likely, the frequency of errors at these two extremes may be explained by the scarcity of purchase data for some products. Even considering all of the Santander data that were supplied, some purchases are so rare that it is entirely conceivable that our random sample contains zero, one, or only a handful of 1's in the corresponding label column. In the event that no 1's are to be found for a given product, it is no wonder that our testing error would be 0; no other error is possible.
+The results of the logistic regressions are unfortunately suspect. A quick examination shows that testing errors range from 0 to 1, inclusive. Probably the scarcity of data for certain products explains the frequency of errors at these two extremes. Even considering all of the Santander data that were supplied, some purchases are so rare that it is entirely conceivable that our random sample contains zero, one, or only a handful of 1's in the corresponding label column. In the event that no 1's are to be found for a given product, it is no wonder that our testing error would be 0; no other error is possible.
 
 Our limitation of the dataset to $1/2^6$ of its original size certainly introduces room for error, but even so, we have almost 200K samples to work with and only 419 features. This is well past the ten-times-the-VC-dimension rule of thumb.\cite{amlbook}
 
-Perhaps a greater amount of feature reduction should have been performed. On a typical example from our 24 regressions, 251 non-zero weights remained. However, only 19 weights measured greater than 0.00001. We intended to perform PCA in order to combat the explosion of features that the bugaboo categorical features imposed: $pais\_residencia$, $canal\_entrada$, and $cod\_prov$ each gave rise to a great many binary features, thereby heightening risk of disproportionately weighting the original categorical columns.
+Perhaps a greater amount of feature reduction should have been performed. On a typical example from our 24 regressions, 251 non-zero weights remained. However, only 19 weights measured greater than 0.00001. We might in future perform PCA in order to combat the explosion of features that the bugaboo categorical features imposed: $pais\_residencia$, $canal\_entrada$, and $cod\_prov$ each gave rise to a great many binary features, thereby heightening risk of disproportionately weighting the original categorical columns.
 
 Our decisions for how to fill in missing values also likely contribute to some inaccuracy in our model.
 
