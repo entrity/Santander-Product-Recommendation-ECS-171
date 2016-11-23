@@ -207,7 +207,7 @@ Run \texttt{fixdata.py} to generate cleaned data, and then run \texttt{flatten.p
 \section{SVM}
 
 \subsection{Data Processing}
-\textbf{Independent Variable Selection:} To increase model efficiency and accuracy we removed irrelevant features. (1) We delete discrete variables with too many classes since they are hard to transform into dummy variables. (2) We leave out independent variables with repeated information. (3) We removed variables with predominantly missing values.
+\textbf{Independent Variable Selection:} To increase model efficiency and accuracy we removed irrelevant features. (1) We delete discrete variables with too many classes since they are hard to transform into dummy variables. (2) We leave out independent variables with repeated information. (3) We removed variables with predominantly missing values.\cyte{paper1}
 
 According to these three  rules, we remove : pais\_residencia, fecha\_alta, indext, conyuemp, canal\_entrada, tipodom, cod\_prov and nomprov.
 
@@ -217,7 +217,7 @@ According to these three  rules, we remove : pais\_residencia, fecha\_alta, inde
 
 \subsection{SVM Model}
 
-SVM is the supervised learning model for classification. With associated learning algorithms, a line or a hyper-plane is found to classify the data.
+SVM is the supervised learning model for classification. With associated learning algorithms, a line or a hyper-plane is found to classify the data. \cite{book}
 
 We want a classifier that is less sensitive to outliers. To do so, we introduce “slack variables” that allow samples to be misclassified. We also utilize kernels.
 
