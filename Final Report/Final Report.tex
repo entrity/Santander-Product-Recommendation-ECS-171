@@ -48,9 +48,7 @@
 \newpage
 
 \section{Introduction}
-This project is aimed at building a more effective recommendation system. Through this system, Santander can predict which products their existing customers will buy in the next month based on their past behavior and that of similar customers. One of the difficulties is how to deal with the large data set. Indeed, the original data set contains 13 million records from January 2015 to June 2016, with almost 1 million customers. How to deal with the large data set and transform the data to the model are the core problems of this project.
 
-In our project, we applied four methods to solve this prediction problem: logistic regression, random forest, SVM and xgboost. For each method, the ways to clean and process the data are different but there are still some similarity.
 
 This paper introduces four machine learning methods. In each sub parts, we will introduce the way we clean the data, models and results, and the discussions of this method.
 
@@ -180,21 +178,13 @@ Run \texttt{fixdata.py} to generate cleaned data, and then run \texttt{flatten.p
 \section{SVM}
 
 \subsection{Data Processing}
-\begin{enumerate}
-	\item Independent Variable Selection
+\textbf{Independent Variable Selection:} To increase model efficiency and accuracy we removed irrelevant features. (1) We delete discrete variables with too many classes since they are hard to transform into dummy variables. (2) We leave out independent variables with repeated information. (3) We removed variables with predominantly missing values.
 
-	To increase model efficiency and accuracy we removed irrelevant features. (1) We delete discrete variables with too many classes since they are hard to transform into dummy variables. (2) We leave out independent variables with repeated information. (3) We removed variables with predominantly missing values.
+According to these three  rules, we remove : pais\_residencia, fecha\_alta, indext, conyuemp, canal\_entrada, tipodom, cod\_prov and nomprov.
 
-	According to these three  rules, we remove : pais\_residencia, fecha\_alta, indext, conyuemp, canal\_entrada, tipodom, cod\_prov and nomprov.
+\textbf{Missing values}: For the cases having missing values in any of the 24 dependent variables, we remove them. This case occurs $<$ 1\% of the time and has no obvious pattern.
 
-	\item  Missing values
-
-	For the cases having missing values in any of the 24 dependent variables, we remove them. This case occurs < 1\% of the time and has no obvious pattern.
-
-	\item Data Transformation
-
-	We transform categorical variables to dummy variables, and standardize the continuous variables.
-\end{enumerate}
+\textbf{Data Transformation}: We transform categorical variables to dummy variables, and standardize the continuous variables.
 
 \subsection{SVM Model}
 
@@ -303,6 +293,9 @@ The mean of these errors is 0.1685.
 
 \subsection{Discussion}
 
+\begin{multicols}{2}
+
+
 The results of the logistic regressions are suspect. Testing errors range from 0 to 1, inclusive. Scarcity of data for certain products may explain the frequency of errors at these two extremes. In the original dataset, some purchases are so rare that it may be that our reduced dataset contains zero $1$'s for a given product, which would yield a testing error of zero.
 
 Although limiting the dataset to $1/2^6$ of its original size may hurt generalization, we still have almost 200K samples to work with and only 419 features, well past the ten-times-the-VC-dimension rule of thumb.\cite{Amlbook}
@@ -310,6 +303,8 @@ Although limiting the dataset to $1/2^6$ of its original size may hurt generaliz
 In future, we might perform further feature reduction. On a typical example from our 24 regressions, 251 non-zero weights remained. Nevertheless, only 19 weights measured greater than 0.00001.
 
 Our decisions for how to fill in missing values also likely contribute to some inaccuracy in our model.
+
+\end{multicols}
 
 \section{Author Contributions}
 
