@@ -41,24 +41,31 @@
 		\begin{large}
 			
 \begin{abstract}
-	 Our topic is specified in the Santander product recommendation competition on Kaggle. In detail, our goal is to predict which products the customer will purchase in the next month based on their past 1.5 year of behavioral and demographic data. To solve this problem, we use four different machine learning methods: logistic regression, SVM, random forest and XGBoost. Since the data size is large and there is no clear response variable in the training set, different subteams use different subsets of the original training set and build their own response variable. What is more, every subteams drop some useless variables and simplify the training set. It is difficult to compare the four different methods, because every subteams manipulate the data in their own way. The logistic regression and SVM subteams both build 24 classifiers for 24 products and the accuracy is high, which is above 0.9. However, we cannot say these two classifiers are powerful, because the training set is quite unbalanced. The random forest and XGboost both build only one multi-classifier model. The accuracy for these two are 0.90 and 0.63. As these two subteams use different data cleaning method and response variable, we cannot say random forest is better than XGboost. In summary, all four methods could provide reasonable predictions and this would help the Santander Bank to build a more effective recommendation system.
+	 Our topic is specified in the Santander product recommendation competition on Kaggle. In detail, our goal is to predict which products the customer will purchase in the next month based on their past 1.5 year of behavioral and demographic data. To solve this problem, we use four different machine learning methods: logistic regression, SVM, random forest and XGBoost. Since the data size is large and there is no clear response variable in the training set, different subteams use different subsets of the original training set and build their own response variable. Thus,it is difficult to compare the four different methods. The logistic regression and SVM subteams both build 24 classifiers for 24 products and the accuracy is high, which is above 0.9. However, we cannot say these two classifiers are powerful, because the training set is quite unbalanced. The random forest and XGboost both build only one multi-classifier model. The accuracy for these two are 0.90 and 0.63. As these two subteams use different data cleaning method and response variable, we cannot say random forest is better than XGboost. In summary, all four methods could provide reasonable predictions and this would help the Santander Bank to build a more effective recommendation system.
 \end{abstract}
+
+\section{Introduction}
+The project is aimed at building a more effective recommendation system. Through this system, Santander can predict which products their existing customers will buy in the next month based on their past behavior and that of similar customers. One of the difficulties is how to deal with the large data set. Indeed, the original data set contains 13 million records from January 2015 to June 2016, with approximate 930 thousand customers. How to deal with the large data set and transform the data to the model are the core problems of this project.
+
+In our project, we applied four methods to solve this prediction problem: logistic regression, random forest, SVM and xgboost. For each method, the ways to clean and process the data are different but there are still some similarity.
+
+This paper introduces four machine learning methods. In each sub parts, we will introduce the way we clean the data, models and results, and the discussions of this method.
 
 \section{XGBoost}
 
 \subsection{Methods}
 
-\noindent \indent XGBoost is short for ``Extreme Gradient Boosting” and is widely used in machine learning problems, especially classification problems with good results in most cases \cite{xg1}\cite{xg2}. The idea behind is very simple. Firstly, we only have one weak classifier, one decision tree. During each iteration, we would add a tree, eventually, XGBoost method makes our model grows to be an ensemble tree. Examples that are mis-classified before gain weight and examples that are classified correctly lose weight. The goal is to minimize the loss function, which takes into account the error and the complexity of the ensemble tree.
+\noindent \indent XGBoost is short for ``Extreme Gradient Boosting" and is widely used in machine learning problems, especially classification problems\cite{xg1}\cite{xg2}. 
 
 \subsection{Data Pre-processing}
 
-\noindent \indent Since there are many missing values and outliers, the first thing is to clean data. 27334 records with 9 consecutive NA values are deleted and the extreme values (for an instance, the 99 percent quantile of the age variable is 88 years old) are excluded. After exploring the original data, we decide to use 32 features to predict the response. The 32 features include \verb|"pais_residencia"|, \verb|"age"|, \verb|"ind_nuevo"|, \verb|"antiguedad"|, \verb|"ind_empleado"|, \verb|"renta"|, \verb|"ind_actividad_cliente"|, \verb|"segmento"| and 24 product status. For the \verb|"age"|, \verb|"antiguedad"| and \verb|"renta"|, we cut them into 5 intervals and they also become categorical features now. 
+\noindent \indent Since there are many missing values and outliers, the first thing is to clean data. 27334 records with 9 consecutive NA values are deleted and the extreme values (for an instance, the 99 percent quantile of the age variable is 88 years old) are excluded. After exploring the original data, we decide to use 32 features to predict the response. For the \verb|"age"|, \verb|"antiguedad"| and \verb|"renta"|, we cut them into 5 intervals and they also become categorical features now. 
 
 The response is the additional product which the customer would add in the next month. If the customer adds more than one product, we only randomly pick one of them. To make the data size smaller and the problem easier, we subset the samples with nonzero response, which means we only consider the records with additional product.
 
 \subsection{XGBoost Algorithm}
 
-\noindent \indent To find the best parameters given the training data. In order to do so, we need to define a so-called objective function, to measure the performance of the model given a certain set of parameters. Here for XGBoost algorithm, the objective function contains two parts: training loss and regularization.
+\noindent \indent To find the best parameters given the training data, we need to define a so-called objective function. Here for XGBoost algorithm, the objective function contains two parts: training loss and regularization.
 \[
 Obj(\Theta) = L(\theta) + \Omega(\theta)
 \]
@@ -104,25 +111,15 @@ step size = 1   &38.45\%       & 31.80\%      & 35.29\%      &18.30\%     & 36.7
 \end{tabular}
 \end{table}
 
-\noindent \indent From the above tables, we can see the highest accuracy for the training set is 64.48\%, and for the test set is 62.94\%, when max.depth = 6, the number of rounds(the number of trees) = 100 and the step size = 0.5. For step size = 0.1 or 0.5, the training accuracy and test accuracy are both about 62\%, which are relatively high. When step size = 1, the accuracy for training and test set are about 40\%, which means this situation is not ideal.
+\noindent \indent From the above tables, we can see the highest accuracy for the training set is 64.48\%, and for the test set is 62.94\%, when max.depth = 6, the number of rounds(the number of trees) = 100 and the step size = 0.5.  When step size = 1, the accuracy for training and test set are about 40\%, which means this situation is not ideal.
 
-\noindent \indent According to the best parameters that lead to highest test accuracy, we got the feature importance plot and final ensemble tree as below. The feature importance figure shows the different gains for different features. From the plot, we can see features \verb|"ind_cno_fin_ult1"|, \verb|"ind_recibo_ult1"| and \verb|"ind_cco_fin_ult1"| obtain the first three highest gains. As for the final ensemble tree, to save space, we just show the first three trees.
+\noindent \indent According to the best parameters that lead to highest test accuracy, we got the feature importance plot  as below. The feature importance figure shows the different gains for different features. From the plot, we can see features \verb|"ind_cno_fin_ult1"|, \verb|"ind_recibo_ult1"| and \verb|"ind_cco_fin_ult1"| obtain the first three highest gains.
 
-\newpage
 \begin{figure}[H]
 \centering
 \includegraphics[width = 160mm]{113.png}
 \caption{Feature Importance}
 \end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width = 160mm]{12.png}
-
-\caption{Final Ensemble Tree}
-\end{figure}
-\newpage
-
 
 \subsection{Discussion}
 
