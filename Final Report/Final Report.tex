@@ -305,27 +305,17 @@ ROC and PRC curve for "ind\_cco\_fin\_ult1" , "ind\_fond\_fin\_ult1" and "ind\_d
 
 \subsection{Defining a sample (features-to-label pair)}
 
-Operating under some ambiguity in the Santander problem description, we resolved to define a sample (features-to-label pair) as the values for any two consecutive months for a single customer (identified by ncodpers). Hereafter, the "date" of a sample refers to the month from which the feature values are drawn, not the month from which the labels (purchases) are drawn.
+With some ambiguity in the Santander description, we defined a sample (features-to-label pair) as the values for any two consecutive months for a single customer. The "date" of a sample refers to the earlier of these two months.
 
 \subsection{ETL}
 
-Our labels (Y-values) are 24 binary fields corresponding to the Santander products which a customer may have purchased. By comparing the product fields from the data file in a given month to those of the previous month (on an individual-customer basis), we determined when each product was purchased and set the corresponding label to 1 if the purchase took place in the month following the date of the sample, 0 otherwise. (If the purchase took place before the 1.5-year range, it is never included in the label.)
+Our labels (Y-values) are 24 binary fields corresponding to the Santander products which a customer may have purchased. We determined when each product was purchased and set the corresponding Y-value to 1 if the purchase took place in the month after the date of the sample, 0 otherwise.
 
-For the feature space (X-values), we did following transformation and feature engineering.
-
-We added a column for each product that holds the number of months since the customer’s first purchase of that product. So the 24 newly-added columns contained the information of the purchase history for each customer before the given month.
-
-The variable "fecha\_alta" was the date in which the customer first acquired a contract with the bank. We replaced it with a variable "memberdays" which holds the difference between this date and the sample date, i.e. "fecha\_dato".
-
-We replaced categorical features with sets of binary features: one binary column for each category for a given feature.
-
-A certain 27334 rows each had exactly 9 missing values in all the same columns. We eliminated the troublesome rows. About 10\% of the samples were missing $renta$; so we filled the missing values by using averages based on province.
-
-Some features were irrelevant for calculation, such as $tipodom$ (address type), and could be discarded easily. Others were used for organizing data but not for calculating regressions: $nomcodpers$ and $fecha\_dato$. $nom\_prov$ was redundant with $cod\_prov$, so we omitted the former.
+For the feature space (X-values), we did the following feature engineering. (1) For each product, we added a column to hold the number of months since the customer’s first purchase of that product. So in total, 24 columns contained the the purchase history for each customer, up to the given month. (2) The variable "fecha\_alta" was the date in which the customer first acquired a contract with the bank. We replaced it with a variable "memberdays" which holds the difference between this date and the sample date, i.e. "fecha\_dato". (3) We replaced categorical features with sets of binary features: one binary column for each category for a given feature. (4) A certain 27334 rows each had exactly 9 missing values in all the same columns. We eliminated the troublesome rows. About 10\% of the samples were missing $renta$; so we filled the missing values by using averages based on province. (5) Some features were irrelevant for calculation, such as $tipodom$ (address type), and could be discarded easily. Others were used for organizing data but not for calculating regressions: $nomcodpers$ and $fecha\_dato$. $nom\_prov$ was redundant with $cod\_prov$, so we omitted the former.
 
 \subsection{Limiting the Sample}
 
-The data had become quite large, taking 39GB in memory. We were compelled to make use of a cluster owned by the Engineering Department. In order to turn out results quickly and avoid the cost of backtracking, we limited the size of the data with which we worked by taking a random sample from the samples produced by our ETL. We experimented with samples of different size and eventually proceeded with a working set of 197968 ($1/2^6$ as many as we produced in ETL). We used a random 10\% of these samples as testing data.
+The data had grown to 39GB in memory. In order to turn out results quickly and avoid the cost of backtracking, we limited the size of the data with which we worked by taking a random sample from the output of our ETL. We experimented with samples of different size and eventually proceeded with a working set of 197968 ($1/2^6$ as many as we produced in ETL). We used a random 10\% of these samples as testing data.
 
 \subsection{Regression}
 
@@ -360,23 +350,23 @@ The mean of these errors is 0.1685.
 
 \subsection{Discussion}
 
-The results of the logistic regressions are unfortunately suspect. A quick examination shows that testing errors range from 0 to 1, inclusive. Probably the scarcity of data for certain products explains the frequency of errors at these two extremes. Even considering all of the Santander data that were supplied, some purchases are so rare that it is entirely conceivable that our random sample contains zero, one, or only a handful of 1's in the corresponding label column. In the event that no 1's are to be found for a given product, it is no wonder that our testing error would be 0; no other error is possible.
+The results of the logistic regressions are suspect. Testing errors range from 0 to 1, inclusive. Scarcity of data for certain products may explain the frequency of errors at these two extremes. In the original dataset, some purchases are so rare that it may be that our reduced dataset contains zero $1$'s for a given product, which would yield a testing error of zero.
 
-Our limitation of the dataset to $1/2^6$ of its original size certainly introduces room for error, but even so, we have almost 200K samples to work with and only 419 features. This is well past the ten-times-the-VC-dimension rule of thumb.\cite{amlbook}
+Although limiting the dataset to $1/2^6$ of its original size may hurt generalization, we still have almost 200K samples to work with and only 419 features, well past the ten-times-the-VC-dimension rule of thumb.\cite{amlbook}
 
-Perhaps a greater amount of feature reduction should have been performed. On a typical example from our 24 regressions, 251 non-zero weights remained. However, only 19 weights measured greater than 0.00001. We might in future perform PCA in order to combat the explosion of features that the bugaboo categorical features imposed: $pais\_residencia$, $canal\_entrada$, and $cod\_prov$ each gave rise to a great many binary features, thereby heightening risk of disproportionately weighting the original categorical columns.
+In future, we might perform further feature reduction. On a typical example from our 24 regressions, 251 non-zero weights remained. Nevertheless, only 19 weights measured greater than 0.00001.
 
 Our decisions for how to fill in missing values also likely contribute to some inaccuracy in our model.
 
-\subsection{Author contributions}
+\subsection{Author Contributions}
 \begin{itemize}
-	\item Bowen He:  Worked on data analysis and interpretation, wrote the code to create purchase history variables, worked on feature engineering, combined and revised the discussion part for all groups.
+	\item Bowen He: data analysis & interpretation; coded purchase-history vars; feature engineering; combined & revised report 'Discussion'
 
-	\item Yuan Tian:  Worked on data analysis and interpretation, created the data cleaning code, generated the idea of ETL process, i.e. defining labels and feature space, and revised the report.
+	\item Yuan Tian: data analysis & interpretation; coded data cleaning; planned ETL, revised report
 
-	\item Miao Wang:  Worked on data analysis and interpretation, wrote the code to create response variables, worked on feature engineering, and revised the report.
+	\item Miao Wang: data analysis & interpretation; coded response vars; feature engineering; revised report
 
-	\item Markham Anderson: Wrote the subgroup report, worked on data processing, created the Logistic regression model, wrote code to get the classifier and evaluated its performance.
+	\item Markham Anderson: wrote subgroup report; data processing; coded regression model, performed classification
 \end{itemize}
 
 \newpage
