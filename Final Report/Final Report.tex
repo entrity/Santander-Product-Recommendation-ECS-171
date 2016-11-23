@@ -302,7 +302,7 @@ The data had grown to 39GB in memory. In order to turn out results quickly and a
 
 \subsection{Regression}
 
-We performed a logistic regression on each of the 24 products that a customer might have purchased. We used the sigmoid function $\frac{1}{1+e^{w^Tx}}$.
+We performed a logistic regression on each of the 24 products that a customer might have purchased. We used the sigmoid function $(1+e^{w^Tx})^{-1}$.
 
 We performed logistic regression using an augmented error if $\lambda \times L_2norm$ (ridge regression). Naturally, we would use cross-validation to identify the best $\lambda$ for the data, but due to time constraints, we used our sense of the problem to decide on a $\lambda$ value of 0.1. If we were to redo this, we would perform 10-fold cross-validation over a range of possible $\lambda$'s and choose the one that produced the lowest validation error.
 
@@ -337,7 +337,7 @@ The mean of these errors is 0.1685.
 
 The results of the logistic regressions are suspect. Testing errors range from 0 to 1, inclusive. Scarcity of data for certain products may explain the frequency of errors at these two extremes. In the original dataset, some purchases are so rare that it may be that our reduced dataset contains zero $1$'s for a given product, which would yield a testing error of zero.
 
-Although limiting the dataset to $1/2^6$ of its original size may hurt generalization, we still have almost 200K samples to work with and only 419 features, well past the ten-times-the-VC-dimension rule of thumb.\cite{amlbook}
+Although limiting the dataset to $1/2^6$ of its original size may hurt generalization, we still have almost 200K samples to work with and only 419 features, well past the ten-times-the-VC-dimension rule of thumb.\cite{Amlbook}
 
 In future, we might perform further feature reduction. On a typical example from our 24 regressions, 251 non-zero weights remained. Nevertheless, only 19 weights measured greater than 0.00001.
 
@@ -353,8 +353,6 @@ Our decisions for how to fill in missing values also likely contribute to some i
 
 	\item Markham Anderson: Wrote the subgroup report, worked on data processing, created the Logistic regression model, wrote code to get the classifier and evaluated its performance.
 \end{itemize}
-
-\newpage
 
 \begin{thebibliography}{9}
 
