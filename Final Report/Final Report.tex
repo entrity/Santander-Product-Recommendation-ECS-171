@@ -56,7 +56,7 @@ This paper introduces four machine learning methods. In each sub parts, we will 
 
 \subsection{Data Pre-processing}
 
-\noindent \indent Since there are many missing values and outliers, the first thing is to clean data. 27334 records with 9 consecutive NA values are deleted and the extreme values (for an instance, the 99 percent quantile of the age variable is 88 years old) are excluded. After exploring the original data, we decide to use 32 features to predict the response. For the \verb|"age"|, \verb|"antiguedad"| and \verb|"renta"|, we cut them into 5 intervals and they also become categorical features now.
+\noindent \indent Since there are many missing values and outliers, the first thing is to delete 27334 records with 9 consecutive NA values and extreme values (for an instance, the 99 percent quantile of the age variable is 88 years old). Then, we decide to only use 32 features to predict the response. For the \verb|"age"|, \verb|"antiguedad"| and \verb|"renta"|, we cut them into 5 intervals and they also become categorical features now. 
 
 The response is the additional product which the customer would add in the next month. If the customer adds more than one product, we only randomly pick one of them. To make the data size smaller and the problem easier, we subset the samples with nonzero response, which means we only consider the records with additional product.
 
@@ -68,9 +68,7 @@ Obj(\Theta) = L(\theta) + \Omega(\theta)
 \]
 where $L$ is the training loss function, and $\Omega$ is the regularization term. The training loss measures how predictive our model is on training data. The regularization term controls the complexity of the model, which helps avoiding overfitting. We define these two items as:
 \[
-L(\theta) = \sum_{i}(y_i - \hat{y_i})^2
-\]
-\[
+L(\theta) = \sum_{i}(y_i - \hat{y_i})^2 \ \ \ \ \ \  
 \Omega(f) = \gamma T + \frac{1}{2}\lambda\sum_{j = 1}^{T}(w_j)^2
 \]
 
@@ -124,25 +122,20 @@ To make the model better, we could dive deeper. For example, we may consider mor
 
 Due to the vague description of the problem, we are not sure how many new products to predict for each user. In fact, most members seldom tried new products based on historical records. Some valuable information might be lost since we drop some predictors and only pick one new product every time (if more than one).
 
-
-\subsection{Author Contribution}
-
-This subgroup consists of fours members, Xinyi Hou, Yingxi Yu, Wenyu Li, and Yuan Xu. Everyone in this subgroup gathered together to discuss how to tackle the problem, determine the method and tune parameters. More specifically, Xinyi was the leader of the whole big project group, pre-processed the data and wrote the abstract of the overall report; Yingxi wrote the initial model code and made the popwerpoint; Wenyu participated in initial model code writing and completed the report; and Yuan mainly focused on the report.
-
 \section{Random Forest}
 	
 \subsection{Data Analysis}
 
 Random forests do not handle time series very well. Had we not transformed the data we would have had to worry about how the training and testing subsets were selected to ensure that future data is not used to predict past data. In addition, a decision tree cannot split on a non repeating independent variable such as time to produce any useful results. So we would have had to generate features to capture the time trend.
 
-In general we filled NA values with the mode of the value across all customers if it was categorical. We moved the outliers for age to the median of the age category (above or below 30).
-For testing, we flattened the time-series data such that each customer only had 1 row. We generally used aggregates of the users' columns, such as the mode for that user over time.
+In general we filled NA values with the mode of the value across all customers if it was categorical. We moved the outliers for age to the median of the age category (above or below 30). 
+For testing, we flattened the time-series data such that each customer only had 1 row. We generally used aggregates of the users' columns, such as the mode for that user over time. 
 Since Kaggle does not provide true classes in 2016-6, our testing set uses product classes from 2016-5 as true predictor variables for each customer.
 
 \subsection{Method}
 
 \paragraph{Random Forest}
-We use a random forest model with 100 trees. A RF model uses decision trees as weak predictors of the response variable to produce a strong predictor in the random forest. Each tree is produced on a random subset of samples with replacement and would otherwise suffer from over fitting and high variance. At each split a random subset of features without replacement is used to find the best split. Each tree produces a classification and the mode of the classifications becomes the forest's overall classification for the sample. However for our model, sklearn instead averages the probability of predicting a class across all trees.\cite{rnSKlearn}  The out of bag samples for each tree is used to test the tree and provide an unbiased estimator of the classification error.\cite{rnLeo}
+We use a random forest model with 100 trees. A RF model uses decision trees as weak predictors of the response variable to produce a strong predictor in the random forest. Each tree is produced on a random subset of samples with replacement and would otherwise suffer from over fitting and high variance. At each split a random subset of features without replacement is used to find the best split. Each tree produces a classification and the mode of the classifications becomes the forest's overall classification for the sample. However for our model, sklearn instead averages the probability of predicting a class across all trees.\cite{rnSKlearn}  The out of bag samples for each tree is used to test the tree and provide an unbiased estimator of the classification error.\cite{rnLeo} 
 
 \paragraph{Choosing the Random Forest}
 
@@ -173,13 +166,6 @@ Random forests scale very well with large input sizes. The bagging process resul
 \subsection{Discussion}
 
 As expected the benefits of the random forest can be seen in how our classification accuracy grows with the number of trees and tree depth. The very high accuracy for the forest of tree size one is most likely because most customers did not buy new products.
-
-
-\subsection{Credits}
-
-Charlton Lin: Created the flattening and feature engineering, and worked on conforming to Kaggle standards.
-Qiaojuan Niu : Created the Random Forest model and code to clean the data.
-Zoran Dabic: Wrote the subgroup report, compiled together the full report, worked on feature engineering, and ran the flatten and clean code to generate the final data sets.
 
 \subsection{Reproduction}
 Run \texttt{fixdata.py} to generate cleaned data, and then run \texttt{flatten.py} to flatten data. Run \texttt{fitmodel.py}. To adjust parameters, modify \texttt{fitmodel.py}. For the final model run \texttt{kaggletest.py} which generates a model using all the data.
@@ -219,13 +205,11 @@ $$min P(w,b) = \frac{1}{2}(||\displaystyle\sum_{i=1}^{m}\alpha_i\Phi(x_i)||)^2 +
 
 \subsection{Results}
 
-Initially, we use accuracy to estimate the results. For each of the 24 estimations, the accuracy is higher than 99\% which indicates a high performance of the model.
-
-The we calculate the overall accuracy: $\text{(\# of cases with all 24 correct predictions)} \div \text{(total \# of cases)}$. In this case, the overall accuracy rate is 98\% which shows SVM method accurate result.
+Initially, we use accuracy to estimate the results. For each of the 24 estimations, the accuracy is higher than 99\% which indicates a high performance of the model. In this case, the overall accuracy rate is 98\% which shows that SVM produces an accurate result.
 
 \subsection{Discussion}
 
-However, scrutiny of the data reveals simply focusing on the accuracy is not reasonable. Precisely, for most dependent variables, the negative class 0 is predominant. Thus, even though all the predictions are zeros, the accuracy would be still easily over 99\%, based on which, the high performance might be caused by the fact that wrong prediction in 1s does not have much influence on the accuracy. To examine this idea, we choose 3 dependent variables with asymmetric distribution in 0s and 1s, and then use ROC and PRC to exhibit the results:
+However, scrutiny of the data reveals simply focusing on the accuracy is not reasonable. For most dependent variables, the negative class 0 is predominant. Thus, since the majority of predictions are 0, incorrect 1 predictions do not influence accuracy much. To examine this idea, we choose 3 dependent variables with asymmetric distribution in 0s and 1s, and then use ROC and PRC to exhibit the results:
 
 \vspace{5mm}
 \begin{tabular}{| l | l | l |}
@@ -237,7 +221,7 @@ However, scrutiny of the data reveals simply focusing on the accuracy is not rea
 \end{tabular}
 \vspace{5mm}
 
-From the table, we can see that though accuracy here is really high, the model is  useless since we are  interested in helping the bank to recommend products to a potential customer. Thus, it is very important to correctly classify 1 as 1. Failing to consider other metrics of evaluation like precision and recall would lead to an unjustified model. Here the recall is 0 and the precision is NA because there is not a single observation being classified as 1. The reason for this is that the negative class 0 is predominant in "ind\_cco\_fin\_ult1" and the model tends to classify everything as 0, producing that all the 1’s are classified as 0. The results are even worse for the other two variables as the class 1 are fewer.
+Although accuracy is very high, the model is useless since we are interested in helping the bank recommend products. Thus, true positives are necessary. Failing to consider other metrics of evaluation like precision and recall would lead to an unjustified model. Here the recall is 0 and the precision is NA because there is not a single observation being classified as 1. The reason is that the negative class 0 is predominant in "ind\_cco\_fin\_ult1" and the model tends to classify everything as 0, producing that all the 1’s are classified as 0. The results are even worse for the other two variables as the class 1 are fewer.
 
 ROC and PRC curve for "ind\_cco\_fin\_ult1" , "ind\_fond\_fin\_ult1" and "ind\_deme\_fin\_ult1"
 
@@ -258,21 +242,6 @@ ROC and PRC curve for "ind\_cco\_fin\_ult1" , "ind\_fond\_fin\_ult1" and "ind\_d
 \vspace{5mm}
 
 \includegraphics[scale = 0.5]{ROCwithandwithoutweights.png}
-
-\subsection{Author contributions}
-\begin{enumerate}
-	\item
-	Data processing:Aoran Zhang, Huiyu Bi
-	\item
-	Data analysis and interpretation: Meng Li, Zhongyu Fan, Huiyu Bi
-	\item
-	Model analysis and interpretation:Aoran Zhang, Meng Li
-	\item
-	Drafting the article: Aoran Zhang, Meng Li, Huiyu Bi, Zhongyu Fan
-	\item
-	Critical revision of the article:Aoran Zhang, Zhongyu Fan
-
-\end{enumerate}
 
 \section{Logistic Regression}
 
@@ -333,16 +302,32 @@ In future, we might perform further feature reduction. On a typical example from
 
 Our decisions for how to fill in missing values also likely contribute to some inaccuracy in our model.
 
-\subsection{Author contributions}
-\begin{itemize}
-	\item Bowen He:  Worked on data analysis and interpretation, wrote the code to create purchase history variables, worked on feature engineering, combined and revised the discussion part for all groups.
+\newpage
 
-	\item Yuan Tian:  Worked on data analysis and interpretation, created the data cleaning code, generated the idea of ETL process, i.e. defining labels and feature space, and revised the report.
+\section{Author Contributions}
 
-	\item Miao Wang:  Worked on data analysis and interpretation, wrote the code to create response variables, worked on feature engineering, and revised the report.
+\textbf{XGBoost} \\
+Xinyi Hou: Lead the project as a whole, pre-processed data, and wrote final abstract. \\
+Yingxi Yu:  Wrote the model code and made the powerpoint. \\
+Wenyu Li: Wrote model code and the group's report. \\
+Yuan Xu: Worked on the group's report. \\
+\textbf{Random Forest} \\
+Charlton Lin: Created the flattening and feature engineering, and worked on conforming to Kaggle standards. \\
+Qiaojuan Niu : Created the Random Forest model and code to clean the data. \\
+Zoran Dabic: Subgroup report, compiled full report, feature engineering, ran the model and generated results. \\
+\textbf{SVM} \\
+Data processing:Aoran Zhang, Huiyu Bi \\
+Data analysis and interpretation: Meng Li, Zhongyu Fan, Huiyu Bi \\
+Model analysis and interpretation:Aoran Zhang, Meng Li \\
+Drafting the article: Aoran Zhang, Meng Li, Huiyu Bi, Zhongyu Fan \\
+Critical revision of the article:Aoran Zhang, Zhongyu Fan \\
+\textbf{Logistic Regression} \\
+Bowen He:  Data analysis and interpretation, code to create purchase history variables, feature engineering\\
+Yuan Tian:  Data analysis and interpretation, data cleaning code, generated the idea of ETL process, i.e. defining labels and feature space, and revised the report. \\
+Miao Wang:  Data analysis and interpretation, code to create response variables, feature engineering, and revised the report. \\
+Markham Anderson: Wrote the subgroup report, data processing, created Logistic regression model, wrote classifier code and evaluated its performance. \\
 
-	\item Markham Anderson: Wrote the subgroup report, worked on data processing, created the Logistic regression model, wrote code to get the classifier and evaluated its performance.
-\end{itemize}
+
 
 \begin{thebibliography}{9}
 
