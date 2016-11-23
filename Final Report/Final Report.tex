@@ -190,15 +190,7 @@ Run \texttt{fixdata.py} to generate cleaned data, and then run \texttt{flatten.p
 \begin{enumerate}
 	\item Independent Variable Selection
 
-	In order to increase the accuracy of model and efficiency of calculation, remove should remove some independent variables:
-
-	\begin{itemize}
-		\item  We delete variables with too many levels for they are hard to be transformed into dummy variables.
-
-		\item We leave out independent variables that have repeated information.
-
-		\item We will not include  variables predominated by missing values.
-	\end{itemize}
+	In order to increase the accuracy of model and efficiency of calculation, remove should remove some independent variables. (1) We delete variables with too many levels for they are hard to be transformed into dummy variables. (2) We leave out independent variables that have repeated information. (3) We will not include  variables predominated by missing values.
 
 	According to these three  rules, we remove : pais\_residencia, fecha\_alta, indext, conyuemp, canal\_entrada, tipodom, cod\_prov and nomprov.
 
@@ -229,9 +221,7 @@ $$min P(w,b) = \frac{1}{2}(||\displaystyle\sum_{i=1}^{m}\alpha_i\Phi(x_i)||)^2 +
 
 Initially, we use accuracy to estimate the results. For each of the 24 estimations, the accuracy is higher than 99\% which indicates a high performance of the model.
 
-The we calculate the overall accuracy:
-$$Overall\enspace Accuracy = \frac{Counts\enspace of\enspace the\enspace cases\enspace which\enspace all\enspace the\enspace 24\enspace variables\enspace are\enspace predicted\enspace correctly}{total\enspace number\enspace of\enspace cases}$$
-In this case, the overall accuracy rate is 98\% which shows SVM method accurate result.
+The we calculate the overall accuracy: $\text{# of cases with all 24 correct predictions} / \text{total # of cases}$. In this case, the overall accuracy rate is 98\% which shows SVM method accurate result.
 
 \subsection{Discussion}
 
