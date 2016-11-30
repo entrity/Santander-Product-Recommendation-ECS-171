@@ -1,0 +1,29 @@
+#combine history records seperately every montn
+#this first month history is just the current month purchase history
+#the next every month is combined all purchase of previous month
+import numpy as np
+import pandas as pd
+
+df  = pd.read_csv("train_ver2.csv",dtype={"sexo":str, "ind_nuevo":str,"ult_fec_cli_1t":str,"indext":str})
+df =  df[['fecha_dato','ncodpers','ind_ahor_fin_ult1','ind_aval_fin_ult1','ind_cco_fin_ult1','ind_cder_fin_ult1','ind_cno_fin_ult1','ind_ctju_fin_ult1','ind_ctma_fin_ult1','ind_ctop_fin_ult1','ind_ctpp_fin_ult1','ind_deco_fin_ult1','ind_deme_fin_ult1','ind_dela_fin_ult1','ind_ecue_fin_ult1','ind_fond_fin_ult1','ind_hip_fin_ult1','ind_plan_fin_ult1','ind_pres_fin_ult1','ind_reca_fin_ult1','ind_tjcr_fin_ult1','ind_valo_fin_ult1','ind_viv_fin_ult1','ind_nomina_ult1','ind_nom_pens_ult1','ind_recibo_ult1']]
+df.loc[df.ind_nomina_ult1.isnull(),"ind_nomina_ult1"] = 0
+df.loc[df.ind_nom_pens_ult1.isnull(),"ind_nom_pens_ult1"] = 0
+A = [625457,627394, 629209,630367,631957,632110,829817,843201,865440,892251,906109,912021,916269,920904,925076,928274,931453]
+last = 0
+current = 0
+for i in range(17):
+	if i == 0:
+		H = df[0:A[i]]
+	else:
+		last = last + A[i-1]
+		current = last + A[i]
+		temp = df[0:current]
+		temp = temp.drop('fecha_dato',1).groupby(['ncodpers']).sum()
+		temp['ncodpers'] = temp.index
+		temp2 = df[last:current]
+		temp2 = temp2[['fecha_dato','ncodpers']]
+		temp2 = pd.merge(left=temp2,right=temp, how='left', left_on='ncodpers', right_on='ncodpers')
+		print(temp2.shape)
+		frames = [result,temp2]
+		H = pd.concat(frames)
+#H.to_csv("H.csv")
